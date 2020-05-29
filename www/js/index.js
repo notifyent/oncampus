@@ -56,6 +56,11 @@
 
 
 
+    , ORDER = {}
+    , ORDER_DESTINATION = {}
+
+
+
 
 
     , INAPPBROWSEROPTIONS = 'location=yes,closebuttoncolor=#FE5215,footer=no,hardwareback=no,hidenavigationbuttons=yes,toolbarcolor=#FFFFFF,shouldPauseOnSuspend=yes'
@@ -779,13 +784,26 @@
             var nm = this.dataset.itemName;
             var pr = this.dataset.itemPrice;
             var ds = this.dataset.itemDiscount;
-            orders.push({id: id, nm: nm, pr: pr, ds: ds, tt: tt});
+            orders.push({id: id, nm: nm, pr: parseFloat(pr).toFixed(2), ds: parseFloat(ds).toFixed(2), tt: tt});
         });
         // console.log(orders);//[[continue]]
         if (orders[0]) {
-            buildInvoice(orders);
+            ORDER = orders;//global
             App.changeViewTo('#invoiceView');
+            $('#invoice-content').html(buildInvoice(orders));
         }
+    }).on('click', '#proceed-to-address', function(e) {
+        App.changeViewTo('#dropoffView');
+        //
+    }).on('click', '#proceed-to-card-details', function(e) {
+        var fm = document.querySelector('#dropoff-content');
+        var address = fm.querySelector('input[name="address"]').value;
+        var name = fm.querySelector('input[name="name"]').value;
+        var phone = fm.querySelector('input[name="phone"]').value;
+        var deliveryInstruction = fm.querySelector('textarea[name="deliveryInstruction"]').value;
+        //
+        ORDER_DESTINATION = {ad: address, nm: name, ph: phone, is: deliveryInstruction};
+        App.changeViewTo('#cardView');
     })
     ;
 
@@ -896,8 +914,8 @@
                                 "<div class='fx fx-jc item-order-spinner' data-item-id='"+c.id+"'>\
                                     <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-subtract'>-</div>\
                                     <div class='fx fx-ac fx-jc w32 item-count tx-c"
-                                        +"' data-item-id='"+ c.id
-                                        +"' data-item-name='"+c.nm
+                                        +"' data-item-id='"+c.id
+                                        +"' data-item-name='"+c.nm.replace("'", '&apos;')
                                         +"' data-item-price='"+c.pr
                                         +"' data-item-discount='"+c.ds
                                         +"'>0</div>\
@@ -913,11 +931,23 @@
     }
     function buildInvoice(p) {
         var h = '';
+        var total = 0;
         p.forEach(function(c) {
-            h+="<div>\
-                    <>\
+            var price = (c.pr - c.ds) * c.tt;
+            total += price;
+            h+="<div class='fw fx pd1015'>\
+                    <span class='b c-o mg-r'>"+c.tt+"x</span>\
+                    <span class='b fx60 mg-r'>"+c.nm+"</span>\
+                    <span class=''>&#8358;"+price+"</span>\
                 </div>";
         });
+        var charges = total + 500;
+        h+="<div class='fw pd30'><input type='text' name='voucher' class='fw pd16 bg-ac tx-c b4-r ba' placeholder='Enter Voucher Code'></div>\
+            <div class='fw fx pd1015'><span class='fx60'>Subtotal</span><span class=''>&#8358;"+total+"</span></div>\
+            <div class='fw fx pd1015'><span class='fx60'>Service Charge</span><span class=''>&#8358;500</span></div>\
+            <div class='fw fx b bt bb pd16'><span class='fx60'>Total</span><span class=''>&#8358;"+charges+"</span></div>";
+        // $('#proceed-to-address').attr('data-due-amount', charges);
+        return h;
     }
     function localizeUserDetails(p) {
         SQL.transaction(function(i) {

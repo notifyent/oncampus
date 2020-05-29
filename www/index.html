@@ -428,8 +428,7 @@
 	  			<!-- [[continue]] -->
 	  		</div>
 	  	</div>
-	  	<div id="proceed-to-cart" class="fw h56 ps-f z3 fx fx-ac f16 b0 l0 b pd020 fw Orange c-w hideWhenShrink" data-key="food">Proceed to cart</div>
-
+	  	<div id="proceed-to-cart" class="fw h56 ps-f z3 fx fx-ac f16 b0 l0 b pd020 Orange c-w hideWhenShrink" data-key="food">Proceed to cart</div>
 		  <!-- </div> -->
   	</div>
 
@@ -462,19 +461,92 @@
 						<input type="number" name="price" class="fw pd20 Grey mg-b16 b4-r ba" placeholder="Price">
 						<input type="number" name="discount" class="sellerInput fw pd20 Grey mg-b16 b4-r ba" placeholder="Add Discount">
 
-						<input type="submit" name="create-submit" class="ps-a b0 l0 b h56 pd020 fx fx-ac fw Orange c-w hideWhenShrink" value="SAVE & CONTINUE">
+						<input type="submit" name="create-submit" class="fw ps-a b0 l0 b h56 pd020 fx fx-ac Orange c-w hideWhenShrink" value="SAVE & CONTINUE">
 					</form>
 				</div>
 			</div>
 
   	</div>
 
-	  <div id="invoiceView" class="Grey" data-function="View">
+	  <div id="invoiceView" class="bg" data-function="View">
 	  	<div class="hr h60 fw bg sh-b fx fx-ac ps-a t0 l0 z1 Orange c-w">
   			<div class="view-closer ps-r t0 l0 fx fx-ac fx-jc f24 icon-left box60"></div>
-  			<div class="b f16">Add an Item</div>
+  			<div class="b f16">Cart</div>
   		</div>
-  		<div id="invoice-content" class="fw fh ovx-h ovy-a pd60t"></div>
+  		<div class="fw fh ovx-h ovy-a pd60t">
+  			<div id="invoice-content" class="fw pd10"></div>
+  		</div>
+  		<div id="proceed-to-address" class="fw h56 ps-f z3 fx fx-ac f16 b0 l0 b pd020 Orange c-w hideWhenShrink">Proceed to checkout</div>
+  	</div>
+
+  	<div id="dropoffView" class="bg" data-function="View">
+	  	<div class="hr h60 fw bg sh-b fx fx-ac ps-a t0 l0 z1 Orange c-w">
+  			<div class="view-closer ps-r t0 l0 fx fx-ac fx-jc f24 icon-left box60"></div>
+  			<div class="b f16">Add dropoff details</div>
+  		</div>
+  		<div class="fw fh ovx-h ovy-a pd60t">
+  			<div id="dropoff-content" class="fw pd30">
+  				<input type='text' name='address' class='fw pd20 mg-b16 bg-ac b4-r ba' placeholder='Enter your delivery address'>
+  				<input type='text' name='name' class='fw pd20 mg-b16 bg-ac b4-r ba' placeholder='Enter your full name'>
+  				<input type='text' name='phone' class='fw pd20 mg-b16 bg-ac b4-r ba' placeholder='Enter your phone number'>
+  				<textarea name="deliveryInstruction" class="fw pd20 mg-b16 bg-ac b4-r ba h60" placeholder="Add delivery instructions (Optional)"></textarea>
+  			</div>
+  		</div>
+  		<div id="proceed-to-card-details" class="fw h56 ps-f z3 fx fx-ac f16 b0 l0 b pd020 Orange c-w hideWhenShrink">Continue</div>
+  	</div>
+
+  	<div id="cardView" class="bg" data-function="View">
+	  	<div class="hr h60 fw bg sh-b fx fx-ac ps-a t0 l0 z1 Orange c-w">
+  			<div class="view-closer ps-r t0 l0 fx fx-ac fx-jc f24 icon-left box60"></div>
+  			<div class="b f16">Add Card details</div>
+  		</div>
+  		<div class="fw fh ovx-h ovy-a pd60t">
+  			<div id="dropoff-content" class="fw pd10">
+  				<div class='fw fx pd20 mg-b16 b4-r ba'>
+  					<span class="mg-rx">Select Card</span>
+  					<div class="fx60">Visa Mastercard Verve</div>
+  				</div>
+  				<input type='text' name='voucher' class='fw pd20 mg-b16 b4-r ba' placeholder='Enter Card Number'>
+  				<div class="fw fx mg-b16">
+  					<div class="fx50 fx fx-jc cd mg-r ba b4-r">
+  						<div class="fw f10 pd10 b bb tx-c c-g">EXPIRY DATE</div>
+  						<div class="fw fx fx-ac">
+			  				<select name='cardMonth' class='select fx50 pd20 pd010'>
+			  					<option value="01">01</option>
+			  					<option value="02">02</option>
+			  					<option value="03">03</option>
+			  					<option value="04">04</option>
+			  					<option value="05">05</option>
+			  					<option value="06">06</option>
+			  					<option value="07">07</option>
+			  					<option value="08">08</option>
+			  					<option value="09">09</option>
+			  					<option value="10">10</option>
+			  					<option value="11">11</option>
+			  					<option value="12">12</option>
+			  				</select>
+			  				<span class="fx15 fx fx-jc">/</span>
+			  				<select name='cardYear' class='select fx50 pd20 pd010 tx-c'>
+			  					<option value="20">20</option>
+			  					<option value="21">21</option>
+			  					<option value="22">22</option>
+			  					<option value="23">23</option>
+			  					<option value="24">24</option>
+			  					<option value="25">25</option>
+			  					<option value="26">26</option>
+			  					<option value="27">27</option>
+			  				</select>
+			  			</div>
+		  			</div>
+		  			<div class="fx50 fx fx-jc cd ba b4-r">
+		  				<div class="fw f10 pd10 b bb tx-c c-g">CVV</div>
+		  				<input type="number" name='cardCVV' class='fw pd20 tx-c' placeholder='123'>
+		  			</div>
+	  			</div>
+	  			<div class='fw fx pd20 mg-b16 bg-ac c-g f10 b4-r ba'>You agree to use the credit card for payment of this transaction.</div>
+  			</div>
+  		</div>
+  		<div id="make-payment" class="fw h56 ps-f z3 fx fx-ac f16 b0 l0 b pd020 Orange c-w hideWhenShrink">Pay</div>
   	</div>
 
   	<div id="profileEditor" class="Grey" data-function="View">
@@ -499,7 +571,7 @@
 							<!-- <input type="text" name="dateofbirth" class="pd20 b4-r ba fw" placeholder="Birthday"> -->
 								<!-- <img src="res/img/icon/calendar.png" class="pd20 ps-a r0 b0"> -->
 							<!-- </div> -->
-							<input type="submit" name="edit-submit" class="ps-a b0 l0 b h56 pd020 fx fx-ac fw Orange c-w hideWhenShrink" value="SAVE & CONTINUE">
+							<input type="submit" name="edit-submit" class="fw ps-a b0 l0 b h56 pd020 fx fx-ac Orange c-w hideWhenShrink" value="SAVE & CONTINUE">
 						</form>
 					</div>
 				</div>
