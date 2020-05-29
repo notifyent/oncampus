@@ -58,6 +58,8 @@
 
     , ORDER = {}
     , ORDER_DESTINATION = {}
+    , ORDER_TOTAL = 0
+    , ORDER_CHARGES = 0
 
 
 
@@ -231,7 +233,6 @@
             , phone VARCHAR NULL
             , user_type INT NOT NULL
             , campus_key INT NOT NULL DEFAULT '0'
-            , matric VARCHAR NULL
             , fullname VARCHAR NULL
             , address VARCHAR NULL
             , category INT NOT NULL
@@ -301,11 +302,12 @@
         }
         App.changeViewTo(View);
         
-    }).on('click', '#viewItems', function() {
+    }).on('click', '#viewItems', function() {//[[continue]]
         App.changeViewTo('#packagesView');
         $('#brandName').text(USERNAME);
         $('#brandAddress').text(ADDRESS);
         $('#addItem').show();//for seller(owned)
+        //
         //
         $('body').spin();
         $.ajax({
@@ -460,25 +462,26 @@
                 break;
 
             case 'signup-form-seller':
-                var Fullname = el.querySelector('input[name="fullname"]').value
+                var Email = el.querySelector('input[name="email"]').value.toLowerCase()
+                  , Fullname = el.querySelector('input[name="fullname"]').value
                   , Username = el.querySelector('input[name="username"]').value
                   , Address = el.querySelector('textarea[name="officeAddress"]').value
                   , Category = el.querySelector('#category-select').value
                   , ServiceType = el.querySelector('#services-select').value
-                  , Email = el.querySelector('input[name="email"]').value.toLowerCase()
                   , Phone = el.querySelector('input[name="phone"]').value
                   , Pass = el.querySelector('input[name="password"]').value
-                  , Matric = el.querySelector('input[name="matric"]').value
+                  , Campus = el.querySelector('select[name="institute"]').value;
                   ;
                 
+                if (!Email && !error) error = "<div class='b bb pd10'>Provide your email address</div><div class='pd10'>Your email address is needed to validate your account.</div>";
                 if (!Fullname && !error) error = "<div class='b bb pd10'>Full Name is Required</div><div class='pd10'>Your full name is required.</div>";
                 if (!Username && !error) error = "<div class='b bb pd10'>Display/Brand Name is Required</div><div class='pd10'>Your Display/Brand name would be displayed on your profile.</div>";
                 if (!Address && !error) error = "<div class='b bb pd10'>Your Address is Required</div><div class='pd10'>Your address is required for pickup.</div>";
                 if (Category == '0' && !error) error = "<div class='b bb pd10'>You must select your business category</div>";
                 if (Category == '4' && ServiceType == '0' && !error) error = "<div class='b bb pd10'>You must select your service type</div>";
-                if (!Email && !error) error = "<div class='b bb pd10'>Provide your email address</div><div class='pd10'>Your email address is needed to validate your account.</div>";
                 if (!Phone && !error) error = "<div class='b bb pd10'>Provide your phone number</div><div class='pd10'>Your phone number is required for notifications.</div>";
                 if ((Pass.length < 8 || Pass.length > 32) && !error) error = "<div class='b bb pd10'>Password not accepted</div><div class='pd10'>Password must be between 8 - 32 characters long.</div>";
+                if (Campus == 0 && !error) error = "<div class='b bb pd10'>Please select your institution</div><div class='pd10'>Select your institution to help us serve your items to nearby buyers.</div>";
                 
                 if (error) {
                     var h = '<div class="pd10">'+error+'<div class="fw fx"><div class="fx60"></div><div class="pd516 b bg-ac c-o ac">OK</div></div></div>';
@@ -498,7 +501,7 @@
                         action: 'register',
                         email: Email,
                         username: Username,
-                        matric: Matric,
+                        campus: Campus,
                         fullname: Fullname,
                         address: Address,
                         category: Category,
@@ -521,7 +524,6 @@
                                 , sk: '0'
                                 , ut: '1'
                                 , ph: Phone
-                                , ma: Matric
                                 , fn: Fullname
                                 , ad: Address
                                 , cg: Category
@@ -758,11 +760,11 @@
         mDrawer.classList.add('sh-l');
         mModal.style.display = 'block';
     }).on('click', '.item-edit', function(e) {
-        // continue
         console.log('Will edit: ' + this.dataset.itemId);
+        // [[continue]]
     }).on('click', '.item-remove', function(e) {
-        // continue
         console.log('Will delete: ' + this.dataset.itemId);
+        // [[continue]]
     }).on('click', '.item-order-spinner', function(e) {
         var id = e.target.classList;
         var counter = this.querySelector('.item-count');
@@ -794,10 +796,10 @@
             App.changeViewTo('#invoiceView');
             $('#invoice-content').html(buildInvoice(orders));
         }
-    }).on('click', '#proceed-to-address', function(e) {
+    }).on('click', '#proceed-to-address', function(e) {//on invoice view
         App.changeViewTo('#dropoffView');
         //
-    }).on('click', '#proceed-to-card-details', function(e) {
+    }).on('click', '#proceed-to-card-details', function(e) {//from address view
         var fm = document.querySelector('#dropoff-content');
         var address = fm.querySelector('input[name="address"]').value;
         var name = fm.querySelector('input[name="name"]').value;
@@ -806,11 +808,65 @@
         //
         ORDER_DESTINATION = {ad: address, nm: name, ph: phone, is: deliveryInstruction};
         App.changeViewTo('#cardView');
+    }).on('click', '.pin-key', function(e) {
+        var pin = $('#card-pin');
+        var val = pin.attr('data-value');
+        var key = this.innerText;
+        if (key == 'x') pin.html('').attr('data-value', '');
+        else pin.html(pin.html() + '*').attr('data-value', val + key);
+    }).on('click', '#make-payment', function(e) {
+        var el = document.querySelector('#card-content');
+        var cardNumber = el.querySelector('input[name="cardNumber"]').value;
+        var cardMonth = el.querySelector('select[name="cardMonth"]').value;
+        var cardYear = el.querySelector('select[name="cardYear"]').value;
+        var cardCVV = el.querySelector('input[name="cardCVV"]').value;
+        var PIN = $('#card-pin').attr('data-value');
+        //
+        // send payment information. [[continue]]
+        //
+        $('body').spin();
+        $.ajax({
+            url: MY_URL + "/send.php",
+            data: {
+                action: 'createOrder',
+                price: ORDER_CHARGES,
+                invoice: ORDER,
+                details: ORDER_DESTINATION,
+                sellerID: 'Campus',
+                buyerID: UUID
+            },
+            method: "POST",
+            timeout: 30000,
+            dataType: 'json',
+            success: function(p) {
+                if (p.state == 'success') {
+                    //
+                } else {
+                    //
+                }
+            },
+            complete: function() {
+               //
+            }
+        });
+
+        // if success, store in db
+        // ORDER and ORDER_DESTINATION
     })
     ;
 
+
+
+
+
+
+
+
+
+
+
     var D = { X: 0, Y: 0, Z: 0 }, VIEW80 = -VIEWPORTWIDTH * 0.80;
-    $('body').on('touchstart', '#timeline', function(e) {
+    $('#drawer-listener').on('touchstart', function(e) {
         mDrawer.style.transition = '';
         var e = e.originalEvent || e, touch = e.touches[0];
         if (e.touches.length > 1) return;
@@ -843,7 +899,7 @@
             d.style.transform = 'translate3d(0, 0, 0)';
             mModal.style.display = 'block';
         } else {
-            d.style.transform = 'translate3d(-100%, 0, 0)';
+            d.style.transform = 'translate3d(-105%, 0, 0)';
             d.classList.remove('sh-l');
             mModal.style.display = 'none';
         }
@@ -873,15 +929,16 @@
     function navEnd(e) {
         this.removeEventListener('touchmove', navMove);
         this.removeEventListener('touchend', navEnd);
+        // if (!e.target.closest('.view-locator')) e.preventDefault();x
         // console.log(e.target);
-        // if (!e.target.closest('.view-locator')) e.preventDefault();
-        if (e.target.id == 'side-nav-modal') e.preventDefault();
+        // if (e.target.id == 'side-nav-modal') e.preventDefault();
+        if (e.target == mModal) e.preventDefault();
         // console.log(nav.z);
         if (nav.z > -150 && nav.z !== 0) {//not down to -150
             mDrawer.style.transform = 'translate3d(0, 0, 0)';
             mModal.style.display = 'block';
         } else {
-            mDrawer.style.transform = 'translate3d(-100%, 0, 0)';
+            mDrawer.style.transform = 'translate3d(-105%, 0, 0)';
             mDrawer.classList.remove('sh-l');
             mModal.style.display = 'none';
         }
@@ -944,6 +1001,8 @@
                 </div>";
         });
         var charges = total + 500;
+        ORDER_TOTAL = total;
+        ORDER_CHARGES = 500;
         h+="<div class='fw pd30'><input type='text' name='voucher' class='fw pd16 bg-ac tx-c b4-r ba' placeholder='Enter Voucher Code'></div>\
             <div class='fw fx pd1015'><span class='fx60'>Subtotal</span><span class=''>&#8358;"+total+"</span></div>\
             <div class='fw fx pd1015'><span class='fx60'>Service Charge</span><span class=''>&#8358;500</span></div>\
@@ -954,8 +1013,8 @@
     function localizeUserDetails(p) {
         SQL.transaction(function(i) {
             i.executeSql(
-                "INSERT INTO on_user(id,uuid,email,username,campus_key,user_type,matric,fullname,address,category,servicetype,phone) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
-                [1, p.ui, p.em, p.un, p.sk, p.ut, p.ma, p.fn, p.ad, p.cg, p.sv, p.ph]
+                "INSERT INTO on_user(id,uuid,email,username,campus_key,user_type,fullname,address,category,servicetype,phone) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                [1, p.ui, p.em, p.un, p.sk, p.ut, p.fn, p.ad, p.cg, p.sv, p.ph]
             );
         }, function(){}, function() {
             //

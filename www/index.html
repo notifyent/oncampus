@@ -109,6 +109,7 @@
 	  			</form>
 	  			<form id="signup-form-seller" class="start-form" autocomplete="off" data-index="1" style="display: none;">
 	  				<div class="sh-a b4-r ov-h">
+		  				<input type="email" name="email" class="pd20 fw bb" placeholder="Email Address">
 		  				<input type="text" name="fullname" class="pd20 fw bb" placeholder="Full Name">
 		  				<input type="text" name="username" class="pd20 fw bb" placeholder="Brand Name">
 		  				<textarea name="officeAddress" class="h60 pd20 fw bb" placeholder="Office Address"></textarea>
@@ -126,8 +127,16 @@
 		  					<option value="3">Dry Cleaning</option>
 		  					<option value="4">Gas</option>
 		  				</select>
-		  				<input type="text" name="matric" class="pd20 fw bb" placeholder="Matric No (Students)">
-		  				<input type="email" name="email" class="pd20 fw bb" placeholder="Email Address">
+		  				
+		  				<select name="institute" class="pd20 fw bb">
+		  					<option value="0">Institute</option>
+		  					<option value="1">Unilorin</option>
+		  					<option value="2">Unilag</option>
+		  					<option value="3">Unibadan</option>
+		  					<option value="4">Uniabuja</option>
+		  					<option value="5">Uniport</option>
+		  				</select>
+
 		  				<input type="tel" name="phone" class="pd20 fw bb" placeholder="Phone Number">
 		  				<div class="ps-r">
 		  					<input type="password" name="password" class="pd20 fw" placeholder="Password">
@@ -211,49 +220,95 @@
 		  		<div id="timeline-content" class="fw fh pd60t pd75b bg-ac ovx-h ovy-a ps-a t0 l0">
 		  			<div class="forBuyer" data-role="screen">
 			  			<div class="bg bt bb mg-t">
-								<div class="fw pd1015">Hire Services in your School</div>
-								<div id="carousel-shop-by-categories" class="carousel">
-				  				<div class="i-b box-40perc-140px pd10 mg-l">
-				  					<div class="fw h80p ov-h fx fx-ac fx-jc ba b4-r">
-				  						<img src="res/img/icon/appliances.png" class="">
+								<div class="fw pd1015 b bb">Hire Services in your School</div>
+								<div class="fw pd16" style="line-height: 0;font-size: 0">
+				  				<div class="boxes4 ba bs-r ov-h sh-a ps-r i-b" data-service-type="1">
+				  					<div class="fw h80p bg-mod ov-h fx fx-ac fx-jc">
+				  						<img src="res/img/icon/design.png" class="" style="height: 130%;">
 				  					</div>
-			  						<div class="f10 b c-g pd12z text-ellipsis">HOSTEL APPLIANCES</div>
+			  						<div class="fw f10 ps-a b0 l0 b h20p fx fx-ac fx-jc pd012 tx-el">GRAPHICS DESIGN</div>
+				  				</div>
+				  				
+				  				<div class="boxes4 ba bs-r ov-h sh-a ps-r i-b" data-service-type="2">
+				  					<div class="fw h80p bg-mod ov-h fx fx-ac fx-jc">
+				  						<img src="res/img/icon/makeup.jpg" class="" style="height: 130%;">
+				  					</div>
+			  						<div class="fw f10 ps-a b0 l0 b h20p fx fx-ac fx-jc pd012 tx-el">MAKEUP ARTIST</div>
+				  				</div>
+				  				
+				  				<div class="boxes4 ba bs-r ov-h sh-a ps-r i-b" data-service-type="3">
+				  					<div class="fw h80p bg-mod ov-h fx fx-ac fx-jc">
+				  						<img src="res/img/icon/laundry.jpg" class="" style="height: 130%;">
+				  					</div>
+			  						<div class="fw f10 ps-a b0 l0 b h20p fx fx-ac fx-jc pd012 tx-el">DRY CLEANING</div>
+				  				</div>
+				  				
+				  				<div class="boxes4 ba bs-r ov-h sh-a ps-r i-b" data-service-type="4">
+				  					<div class="fw h80p bg-mod ov-h fx fx-ac fx-jc">
+				  						<img src="res/img/icon/gas.jpg" class="" style="height: 130%;">
+				  					</div>
+			  						<div class="fw f10 ps-a b0 l0 b h20p fx fx-ac fx-jc pd012 tx-el">GAS</div>
 				  				</div>
 				  			</div>
 				  		</div>
 
 			  			<div class="bg bt bb mg-t">
-				  			<div class="pd1015">Buy and sell in your institute</div>
-				  			<div id="carousel-top-sellers" class="carousel">
-				  				<div class="i-b box-40perc-140px pd10 mg-l">
-				  					<div class="fw h80p ov-h fx fx-ac fx-jc ba b4-r">
-				  						<img src="res/img/icon/appliances.png" class="">
+				  			<div class="fw pd1015 b bb">Buy and sell in your institute</div>
+				  			<div id="carousel-shop-by-categories" class="carousel pd16" style="line-height: 0; font-size: 0;">
+				  				<div class="w42 i-b ov-h Pink sh-a mg-r ba bs-r">
+				  					<div class="fw h80p ov-h">
+				  						<img src="res/img/icon/appliances.jpg" style="height: 130%;">
 				  					</div>
-			  						<div class="f10 b c-g pd12z text-ellipsis">HOSTEL APPLIANCES</div>
+			  						<div class="fw f10 b h20p fx fx-ac fx-jc pd012 tx-el">HOSTEL APPLIANCES</div>
 				  				</div>
+				  				<div class="w42 i-b ov-h Pink sh-a mg-r ba bs-r">
+				  					<div class="fw h80p ov-h">
+				  						<img src="res/img/icon/electronics.jpg" style="height: 130%;">
+				  					</div>
+			  						<div class="fw f10 b h20p fx fx-ac fx-jc pd012 tx-el">ELECTRONICS</div>
+				  				</div>
+				  				<div class="w42 i-b ov-h Pink sh-a mg-r ba bs-r">
+				  					<div class="fw h80p ov-h">
+				  						<img src="res/img/icon/phones.png" style="height: 130%;">
+				  					</div>
+			  						<div class="fw f10 b h20p fx fx-ac fx-jc pd012 tx-el">MOBILE PHONES</div>
+				  				</div>
+				  				<div class="w42 i-b ov-h Pink sh-a mg-r ba bs-r">
+				  					<div class="fw h80p ov-h">
+				  						<img src="res/img/icon/fashion.jpg" style="height: 130%;">
+				  					</div>
+			  						<div class="fw f10 b h20p fx fx-ac fx-jc pd012 tx-el">FASHION PRODUCTS</div>
+				  				</div>
+				  				<div class="w42 i-b ov-h Pink c-w sh-a mg-r ba bs-r">
+				  					<div class="fw h80p ov-h">
+				  						<img src="res/img/icon/more.jpg" style="height: 130%;">
+				  					</div>
+			  						<div class="fw f10 b h20p fx fx-ac fx-jc pd012 tx-el">MORE</div>
+				  				</div>
+				  				
 				  			</div>
 				  		</div>
 
-				  		<div class="bg bt bb mg-t">
-								<div class="fw pd1015">Buy Event Tickets</div>
-								<div id="carousel-shop-by-categories" class="carousel">
-				  				<div class="i-b box-40perc-140px pd10 mg-l">
+				  		<div class="bg bt bb mg-t"><!-- [[continue]] -->
+								<div class="fw pd1015 b bb">Buy Event Tickets</div>
+								<div id="carousel-buy-tickets" class="carousel">
+				  				<div class="i-b pd10 mg-l">
 				  					<div class="fw h80p ov-h fx fx-ac fx-jc ba b4-r">
 				  						<img src="res/img/icon/appliances.png" class="">
 				  					</div>
-			  						<div class="f10 b c-g pd12z text-ellipsis">HOSTEL APPLIANCES</div>
+			  						<div class="f10 b c-g pd12z tx-el">TICKETS</div>
 				  				</div>
 				  			</div>
 				  		</div>
 							
-							<div class="bg bt bb mg-t">
-								<div class="fw pd1015">Restaurants around you</div>
-								<div id="carousel-shop-by-categories" class="carousel">
-				  				<div class="i-b box-40perc-140px pd10 mg-l">
+							<div class="bg bt bb mg-t"><!-- [[continue]] -->
+								<div class="fw pd1015 b bb">Restaurants around you</div>
+								<div id="carousel-buy-food" class="carousel">
+				  				<div class="i-b pd10 mg-l">
 				  					<div class="fw h80p ov-h fx fx-ac fx-jc ba b4-r">
 				  						<img src="res/img/icon/appliances.png" class="">
 				  					</div>
-			  						<div class="f10 b c-g pd12z text-ellipsis">HOSTEL APPLIANCES</div>
+			  						<div class="f10 b c-g pd12z tx-el">FOOD</div>
 				  				</div>
 				  			</div>
 				  		</div>
@@ -288,39 +343,6 @@
   						<div class="">&#8358;85,000.00</div>
   					</div>
   				</div> -->
-
-		  		<div id="side-nav">
-				    <div id="side-nav-modal" class="fw fh ps-a z2 ov-h bg-fd"></div>
-				    <div id="side-nav-menu-view" class="fh fx cd fx-jc pd100b c-g bg ovx-h ovy-a">
-			        <div class="pd20">
-			    	    <img src="res/img/user.png" class="box120 b-rd fw">
-			        </div>
-			        <!-- buyer -->
-					    <div class="forBuyer fw bg-pl pd16 bb fx fx-ac ac bt">
-					    	<div class="w32 fx fx-ac fx-jc f20 icon-wallet"></div>
-					    	<div class="fx60 mg-l f14">Purchases and Orders</div>
-					    </div>
-					    <!-- seller -->
-					    <div class="forSeller fw bg-pl pd16 bb fx fx-ac ac bt">
-					    	<div class="w32 fx fx-ac fx-jc f20 icon-basket"></div>
-					    	<div class="fx60 mg-l f14">Switch to Buyer profile</div>
-					    </div>
-					    <div id="viewItems" class="forSeller fw bg-pl pd16 bb fx fx-ac ac">
-								<div class="w32 fx fx-ac fx-jc f20 icon-restaurant"></div>
-					    	<div class="fx60 mg-l f14">Upload Menu/Product List</div>
-					    </div>
-					    <div class="fw bg-pl pd16 bb fx fx-ac ac">
-								<div class="w32 fx fx-ac fx-jc f20 icon-wallet"></div>
-					    	<div class="fx60 mg-l f14">Withdraw from Wallet</div>
-					    </div>
-					    <!-- both -->
-					    <div class="fw bg-pl pd16 bb fx fx-ac ac view-locator" data-view="#profileEditor">
-					    	<div class="w32 fx fx-ac fx-jc f20 icon-user"></div>
-					    	<div class="fx60 mg-l f14">My Account</div>
-					    </div>
-						  <!-- </div> -->
-						</div>
-		  		</div>
 				</div>
 
 				<div id="chatScreen" class="" data-function="Tab"><!-- chat -->
@@ -351,32 +373,32 @@
 								<div class="h100 fx fx-ac fx-jc">
 		  						<img src="res/img/icon/phone.png">
 		  					</div>
-	  						<div class="fw f12 b tx-c c-g pd12z text-ellipsis">PHONES</div>
+	  						<div class="fw f12 b tx-c c-g pd12z tx-el">PHONES</div>
 							</div><div class="boxes-2 ba b4-r">
 								<div class="h100 fx fx-ac fx-jc">
 		  						<img src="res/img/icon/appliances.png">
 		  					</div>
-	  						<div class="fw f12 b tx-c c-g pd12z text-ellipsis">APPLIANCES</div>
+	  						<div class="fw f12 b tx-c c-g pd12z tx-el">APPLIANCES</div>
 							</div><div class="boxes-2 ba b4-r">
 								<div class="h100 fx fx-ac fx-jc">
 		  						<img src="res/img/icon/car.png">
 		  					</div>
-	  						<div class="fw f12 b tx-c c-g pd12z text-ellipsis">VEHICLE</div>
+	  						<div class="fw f12 b tx-c c-g pd12z tx-el">VEHICLE</div>
 							</div><div class="boxes-2 ba b4-r">
 								<div class="h100 fx fx-ac fx-jc">
 		  						<img src="res/img/icon/food.png">
 		  					</div>
-	  						<div class="fw f12 b tx-c c-g pd12z text-ellipsis">FOOD</div>
+	  						<div class="fw f12 b tx-c c-g pd12z tx-el">FOOD</div>
 							</div><div class="boxes-2 ba b4-r">
 								<div class="h100 fx fx-ac fx-jc">
 		  						<img src="res/img/icon/electronics.png">
 		  					</div>
-	  						<div class="fw f12 b tx-c c-g pd12z text-ellipsis">ELECTRONICS</div>
+	  						<div class="fw f12 b tx-c c-g pd12z tx-el">ELECTRONICS</div>
 							</div><div class="boxes-2 ba b4-r">
 								<div class="h100 fx fx-ac fx-jc">
 		  						<img src="res/img/icon/laundry.png">
 		  					</div>
-	  						<div class="fw f12 b tx-c c-g pd12z text-ellipsis">LAUNDRY</div>
+	  						<div class="fw f12 b tx-c c-g pd12z tx-el">LAUNDRY</div>
 							</div>
 						</div>
 					</div>
@@ -399,6 +421,43 @@
 				<div class="tab-locator fx15 fx fx-jc forSeller" data-tab="#chatScreen"><div class="f24 icon-mail-alt"></div></div>
 				<div class="tab-locator fx15 fx fx-jc" data-tab="#checkoutScreen"><div class="f24 icon-basket"></div></div>
 			</div>
+
+			<div id="drawer-listener" class="bg-tr ps-f z3 fh t0 l0" style="width: 12px;"></div>
+
+			<div id="side-nav" class="fh ps-a t0 l0">
+		    <div id="side-nav-modal" class="vw fh ps-a t0 l0 z2 ov-h bg-fd"></div>
+		    <div id="side-nav-menu-view" class="fh fx cd ps-a t0 l0 fx-jc pd100b c-g bg ovx-h ovy-a">
+	        <div class="pd20">
+	    	    <img src="res/img/user.png" class="box120 b-rd fw">
+	        </div>
+	        <!-- buyer -->
+			    <div class="forBuyer fw bg-pl pd16 bb fx fx-ac ac bt">
+			    	<div class="w32 fx fx-ac fx-jc f20 icon-wallet"></div>
+			    	<div class="fx60 mg-l f14">Purchases and Orders</div>
+			    </div>
+			    <!-- seller -->
+			    <div class="forSeller fw bg-pl pd16 bb fx fx-ac ac bt">
+			    	<div class="w32 fx fx-ac fx-jc f20 icon-basket"></div>
+			    	<div class="fx60 mg-l f14">Switch to Buyer profile</div>
+			    </div>
+			    <div id="viewItems" class="forSeller fw bg-pl pd16 bb fx fx-ac ac">
+						<div class="w32 fx fx-ac fx-jc f20 icon-restaurant"></div>
+			    	<div class="fx60 mg-l f14">Upload Menu/Product List</div>
+			    </div>
+			    <div class="fw bg-pl pd16 bb fx fx-ac ac">
+						<div class="w32 fx fx-ac fx-jc f20 icon-wallet"></div>
+			    	<div class="fx60 mg-l f14">Withdraw from Wallet</div>
+			    </div>
+			    <!-- both -->
+			    <div class="fw bg-pl pd16 bb fx fx-ac ac view-locator" data-view="#profileEditor">
+			    	<div class="w32 fx fx-ac fx-jc f20 icon-user"></div>
+			    	<div class="fx60 mg-l f14">My Account</div>
+			    </div>
+				  <!-- </div> -->
+				</div>
+  		</div>
+
+
   	</div>
 
   	<div id="packagesView" class="Grey" data-function="View">
@@ -498,15 +557,19 @@
   			<div class="view-closer ps-r t0 l0 fx fx-ac fx-jc f24 icon-left box60"></div>
   			<div class="b f16">Add Card details</div>
   		</div>
-  		<div class="fw fh ovx-h ovy-a pd60t">
-  			<div id="dropoff-content" class="fw pd10">
-  				<div class='fw fx pd20 mg-b16 b4-r ba'>
+  		<div class="fw fh ovx-h bg-ac ovy-a pd60t">
+  			<div id="card-content" class="fw pd20">
+  				<div class='fw h60 fx fx-ac pd20 mg-b16 bg b4-r ba'>
   					<span class="mg-rx">Select Card</span>
-  					<div class="fx60">Visa Mastercard Verve</div>
+  					<div class="fx60 fx fx-je">
+  						<span class="box24 fx fx-ac ov-h mg-r"><img src="res/img/icon/visa.png" class="fw"></span>
+  						<span class="box24 fx fx-ac ov-h mg-r"><img src="res/img/icon/mastercard.png" class="fw"></span>
+  						<span class="box24 fx fx-ac ov-h"><img src="res/img/icon/verve.png" class="fw"></span>
+	  				</div>
   				</div>
-  				<input type='text' name='voucher' class='fw pd20 mg-b16 b4-r ba' placeholder='Enter Card Number'>
+  				<input type='text' name='cardNumber' class='fw pd20 mg-b16 bg b4-r ba' placeholder='Enter Card Number'>
   				<div class="fw fx mg-b16">
-  					<div class="fx50 fx fx-jc cd mg-r ba b4-r">
+  					<div class="fx50 fx fx-jc cd mg-r bg ba b4-r">
   						<div class="fw f10 pd10 b bb tx-c c-g">EXPIRY DATE</div>
   						<div class="fw fx fx-ac">
 			  				<select name='cardMonth' class='select fx50 pd20 pd010'>
@@ -536,11 +599,32 @@
 			  				</select>
 			  			</div>
 		  			</div>
-		  			<div class="fx50 fx fx-jc cd ba b4-r">
+		  			<div class="fx50 fx fx-jc bg cd ba b4-r">
 		  				<div class="fw f10 pd10 b bb tx-c c-g">CVV</div>
 		  				<input type="number" name='cardCVV' class='fw pd20 tx-c' placeholder='123'>
 		  			</div>
 	  			</div>
+
+	  			<div class='fw fx mg-b16 bg b4-r ba'>
+	  				<div class="pd10">
+		  				<div class="fw f10 pd10 b bb tx-c c-g">PIN</div>
+		  				<div id="card-pin" class="tx-c mg-t" data-value=""></div>
+	  				</div>
+	  				<div class="fx60 fx fx-ww fx-ac fx-je pd10z">
+	  					<div class="pin-key box32 fx fx-ac fx-jc ba b2-r b mg-r mg-b">0</div>
+	  					<div class="pin-key box32 fx fx-ac fx-jc ba b2-r b mg-r mg-b">1</div>
+	  					<div class="pin-key box32 fx fx-ac fx-jc ba b2-r b mg-r mg-b">2</div>
+	  					<div class="pin-key box32 fx fx-ac fx-jc ba b2-r b mg-r mg-b">3</div>
+	  					<div class="pin-key box32 fx fx-ac fx-jc ba b2-r b mg-r mg-b">4</div>
+	  					<div class="pin-key box32 fx fx-ac fx-jc ba b2-r b mg-r mg-b">5</div>
+	  					<div class="pin-key box32 fx fx-ac fx-jc ba b2-r b mg-r mg-b">6</div>
+	  					<div class="pin-key box32 fx fx-ac fx-jc ba b2-r b mg-r mg-b">7</div>
+	  					<div class="pin-key box32 fx fx-ac fx-jc ba b2-r b mg-r mg-b">8</div>
+	  					<div class="pin-key box32 fx fx-ac fx-jc ba b2-r b mg-r mg-b">9</div>
+	  					<div class="pin-key box32 fx fx-ac fx-jc b2-r b mg-r mg-b Orange c-w">x</div>
+	  				</div>
+	  			</div>
+
 	  			<div class='fw fx pd20 tx-c mg-b16 bg-ac c-g f10 b4-r ba'>You agree to use the credit card for payment of this transaction.</div>
   			</div>
   		</div>
