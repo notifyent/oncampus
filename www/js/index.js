@@ -758,9 +758,11 @@
         mDrawer.classList.add('sh-l');
         mModal.style.display = 'block';
     }).on('click', '.item-edit', function(e) {
-        //
+        // continue
+        console.log('Will edit: ' + this.dataset.itemId);
     }).on('click', '.item-remove', function(e) {
-        //
+        // continue
+        console.log('Will delete: ' + this.dataset.itemId);
     }).on('click', '.item-order-spinner', function(e) {
         var id = e.target.classList;
         var counter = this.querySelector('.item-count');
