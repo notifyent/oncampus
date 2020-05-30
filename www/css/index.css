@@ -147,6 +147,9 @@ input[type=checkbox]:checked:after {
 .c-b {
     color: 000000;
 }
+.f0 {
+    font-size: 0;
+}
 .f6 {
     font-size: 6px;
 }
@@ -273,6 +276,12 @@ input[type=checkbox]:checked:after {
 .l0 {
     left: 0;
 }
+.lh0 {
+    line-height: 0;
+}
+.lh-i {
+    line-height: initial;;
+}
 .ps-f {
     position: fixed;
 }
@@ -291,13 +300,21 @@ input[type=checkbox]:checked:after {
 .w80p {
     width: 80%;
 }
-.w42 {
-    width: 42%;
+.w42v-c {
+    width: 42vw;
     height: 42vw;
     min-width: 120px;
     min-height: 120px;
     max-width: 240px;
     max-height: 240px;
+}
+.w85p-c {
+    width: 85vw;
+    height: 50vw;
+    min-width: 200px;
+    min-height: 118px;
+    max-width: 540px;
+    max-height: 318px;
 }
 .w32 {
     width: 32px;
@@ -619,10 +636,9 @@ input[type=checkbox]:checked:after {
     height: 40vw;
     margin-right: 10px;
     margin-bottom: 10px;
-    /*min-width: 120px;*/
-    /*min-height: 120px;*/
-    /*max-width: 200px;*/
-    /*max-height: 200px;*/
+
+    max-width: 300px;
+    max-height: 272px;
 }
 .boxes4:nth-child(2n) {
     margin-right: 0!important;

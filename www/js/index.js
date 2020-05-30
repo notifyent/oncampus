@@ -257,9 +257,13 @@
                         if (USERTYPE == 0) {//buyer
                             $('.forSeller').addClass('hd');
                             $('.forBuyer').removeClass('hd');
+                            // fetchEvents();
+                            fetchRestaurants();
                         } else if (USERTYPE == 1) {
                             $('.forSeller').removeClass('hd');
                             $('.forBuyer').addClass('hd');
+                            // fetchWallet();
+                            // fetchProgress();
                         }
                     } else {//no data
                         $('#splash-image').removeClass('blink');
@@ -871,11 +875,7 @@
         var e = e.originalEvent || e, touch = e.touches[0];
         if (e.touches.length > 1) return;
         if (touch) {
-            D.Z = VIEW80, 
-            D.X = touch.pageX, 
-            D.Y = touch.pageY;
-            // if (touch.pageX > 80) return;
-            // mDrawer.style.transition = '';
+            D.Z = VIEW80, D.X = touch.pageX, D.Y = touch.pageY;
             this.addEventListener('touchmove', touchmove);
             this.addEventListener('touchend', touchend);
         }
@@ -894,17 +894,15 @@
     function touchend(e) {
         this.removeEventListener('touchmove', touchmove);
         this.removeEventListener('touchend', touchend);
-        var d = mDrawer;
         if (D.Z > -150) {
-            d.style.transform = 'translate3d(0, 0, 0)';
+            mDrawer.style.transform = 'translate3d(0, 0, 0)';
             mModal.style.display = 'block';
         } else {
-            d.style.transform = 'translate3d(-105%, 0, 0)';
-            d.classList.remove('sh-l');
+            mDrawer.style.transform = 'translate3d(-105%, 0, 0)';
+            mDrawer.classList.remove('sh-l');
             mModal.style.display = 'none';
         }
-        d.style.transition = 'all 200ms ease-out';
-        d.addEventListener('transitionend', function() {d.style.transition = '';});
+        mDrawer.style.transition = 'all 200ms ease-out';
     }
 
     var nav = { x: 0, y: 0, z: 0 }
@@ -943,7 +941,6 @@
             mModal.style.display = 'none';
         }
         mDrawer.style.transition = 'all 200ms ease-in';
-        // mDrawer.addEventListener('transitionend', function() {mDrawer.style.transition = '';});
     }
 
  
@@ -952,6 +949,41 @@
 
 
 
+    function fetchRestaurants(source) {//timeline, search,
+        $.ajax({
+            url: MY_URL + "/fetch.php",
+            data: {
+                action: 'fetchRestaurants',
+                campus: CAMPUSKEY,
+                // catg: '2',
+                key: UUID
+            },
+            timeout: 30000,
+            dataType: 'json',
+            method: "GET",
+            success: function(p) {
+                // console.log(p);
+                $('#carousel-buy-food').html(buildRestaurants(p));
+            },
+            complete: function() {$('body').unspin();}
+        });
+    }
+    function buildRestaurants(p) {
+        var h = '';
+        p.forEach(function(c) {
+            h+="<div class='w85p-c i-b ov-h mg-r sh-a ba ps-r bs-r'>\
+                    <div class='fw fh ov-h'>\
+                        <img src='"+MY_URL+"/img/users/"+c.ui+".jpg' class='fw'>\
+                    </div>\
+                    <div class='fw ps-a tx-sh c-w bg-mod lh-i b0 l0 pd10'>\
+                        <div class='fw tx-el b f20'>"+c.nm+"</div>\
+                        <div class='fw ovx-h ovy-a f10'>"+c.ad+"</div>\
+                    </div>\
+                </div>";
+        });
+        return (h+h+h);
+        //
+    }
     function buildItems(p, local) {//local(future)
         var h = '';
         p.forEach(function(c) {
