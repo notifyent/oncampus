@@ -13,7 +13,7 @@
   	<div id="splashView" class="Cream active-view" data-function="View">
   		<div class="fw fh fx fx-ac fx-jc">
   			<div class="fw fx fx-jc pd16">
-	  			<img id="splash-image" src="res/img/logo.png" class="w80p">
+	  			<img src="res/img/logo.png" class="w80p">
 	  		</div>
   		</div>
 
@@ -439,7 +439,7 @@
 			    	<div class="w32 fx fx-ac fx-jc f20 icon-suitcase"></div>
 			    	<div id="service-name" class="fx60 mg-l f14 tx-uc"></div>
 			    </div>
-			    <div id="viewItems" class="forSeller fw bg-pl pd16 bb fx fx-ac ac">
+			    <div id="myItemsLink" class="forSeller fw bg-pl pd16 bb fx fx-ac ac">
 						<div class="w32 fx fx-ac fx-jc f20 icon-restaurant"></div>
 			    	<div class="fx60 mg-l f14">Upload Menu/Product List</div>
 			    </div>
@@ -459,7 +459,102 @@
 
   	</div>
 
-  	<div id="packagesView" class="Grey" data-function="View"></div>
+  	<div id="itemsView" class="Grey" data-function="View">
+  		<div class="fw fh ov-h items-view-category" data-catg="1"><!-- e-commerce -->
+	  		<!-- <div class="hr h35v banner shop-banner ov-h fw bg-im-cv bg ps-r sh-a fx cd">
+	        <div class="fh z1">
+	          <div class="view-closer ps-r t0 l0 fx fx-ac fx-jc f24 c-w tx-sh icon-left box60"></div>
+	          <div class="fw ps-r pd016 c-w tx-sh">
+	            <div class="display-name fw tx-el b f20" data-catg="1"></div>
+	            <div class="user-address fw h36_4 ovx-h ovy-a" data-catg="1"></div>
+	          </div>
+	          <div class="ps-a t0 r0 fx fx-ac fx-jc f24 c-w tx-sh box60 add-item" data-catg="1">+</div>
+	          <div class="forBuyer ps-a t0 r0 fx fx-ac fx-jc cd bg-fd b-rd tx-c c-w tx-sh mg-rx mg-tx box60 icon-mail-alt service-review" data-catg="1"><span class="f10">Drop a review</span></div>
+	        </div>
+		    </div>
+		    <div class="fw banner-content ps-r bg z3 fx60">
+	        <div class="fw fx nav h50 sh-b tx-c">
+	          <div class="food-type menu-btn ps-r pd16z active fx15" data-type="1">Meal</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="2">Snacks</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="3">Drinks</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="4">Special</div>
+	        </div>
+	        <div class="banner-inner fh-50 ovx-h ovy-a pd75b menu-container" data-catg="1" data-type="1"></div>
+	      </div>
+	      <div class="forBuyer go-to-cart fw h56 ps-f z3 fx fx-ac f16 b0 l0 b pd020 Orange c-w hideWhenShrink" data-catg="1">Proceed to cart</div> -->
+	    </div>
+	    <div class="fw fh ov-h items-view-category" data-catg="2"><!-- food -->
+	  		<div class="hr h35v banner shop-banner ov-h fw bg-im-cv bg ps-r sh-a fx cd">
+	        <div class="fh z1">
+	          <div class="view-closer ps-r t0 l0 fx fx-ac fx-jc f24 c-w tx-sh icon-left box60"></div>
+	          <div class="fw ps-r pd016 c-w tx-sh">
+	            <div class="display-name fw tx-el b f20" data-catg="2"></div><!--  -->
+	            <div class="user-address fw h36_4 ovx-h ovy-a" data-catg="2"></div><!--  -->
+	          </div>
+	          <div class="ps-a t0 r0 fx fx-ac fx-jc f24 c-w tx-sh box60 add-item" data-catg="2">+</div><!--  -->
+	          <div class="forBuyer ps-a t0 r0 fx fx-ac fx-jc cd bg-fd b-rd tx-c c-w tx-sh mg-rx mg-tx box60 icon-mail-alt service-review" data-catg="2"><span class="f10">Drop a review</span></div><!-- [[continue]] -->
+	        </div>
+		    </div>
+		    <div class="fw banner-content ps-r bg z3 fx60">
+	        <div class="fw fx nav h50 sh-b tx-c">
+	          <div class="food-type menu-btn ps-r pd16z active fx15" data-type="1">Meal</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="2">Snacks</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="3">Drinks</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="4">Special</div>
+	        </div>
+	        <div class="banner-inner fh-50 ovx-h ovy-a pd75b menu-container" data-catg="2" data-type="1"></div><!--  -->
+	      </div>
+	      <div class="forBuyer go-to-cart fw h56 ps-f z3 fx fx-ac f16 b0 l0 b pd020 Orange c-w hideWhenShrink" data-catg="2">Proceed to cart</div><!--  -->
+	    </div>
+	    <div class="fw fh ov-h items-view-category" data-catg="3"><!-- ticket -->
+	  		<div class="hr h35v banner shop-banner ov-h fw bg-im-cv bg ps-r sh-a fx cd">
+	        <div class="fh z1">
+	          <div class="view-closer ps-r t0 l0 fx fx-ac fx-jc f24 c-w tx-sh icon-left box60"></div>
+	          <div class="fw ps-r pd016 c-w tx-sh">
+	            <div class="display-name fw tx-el b f20" data-catg="3"></div><!--  -->
+	            <div class="user-address fw h36_4 ovx-h ovy-a" data-catg="3"></div><!--  -->
+	          </div>
+	          <div class="ps-a t0 r0 fx fx-ac fx-jc f24 c-w tx-sh box60 add-item" data-catg="3">+</div><!--  -->
+	          <div class="forBuyer ps-a t0 r0 fx fx-ac fx-jc cd bg-fd b-rd tx-c c-w tx-sh mg-rx mg-tx box60 icon-mail-alt service-review" data-catg="3"><span class="f10">Drop a review</span></div><!-- [[continue]] -->
+	        </div>
+		    </div>
+		    <div class="fw banner-content ps-r bg z3 fx60">
+	        <div class="fw fx nav h50 sh-b tx-c">
+	          <div class="food-type menu-btn ps-r pd16z active fx15" data-type="1">Meal</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="2">Snacks</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="3">Drinks</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="4">Special</div>
+	        </div>
+	        <div class="banner-inner fh-50 ovx-h ovy-a pd75b menu-container" data-catg="3" data-type="1"></div><!--  -->
+	      </div>
+	      <div class="forBuyer go-to-cart fw h56 ps-f z3 fx fx-ac f16 b0 l0 b pd020 Orange c-w hideWhenShrink" data-catg="3">Proceed to cart</div><!--  -->
+	    </div>
+	    <div class="fw fh ov-h items-view-category" data-sub="1"><!-- graphics -->
+	  		<div class="hr h35v banner shop-banner ov-h fw bg-im-cv bg ps-r sh-a fx cd">
+	        <div class="fh z1">
+	          <div class="view-closer ps-r t0 l0 fx fx-ac fx-jc f24 c-w tx-sh icon-left box60"></div>
+	          <div class="fw ps-r pd016 c-w tx-sh">
+	            <div class="display-name fw tx-el b f20" data-sub="1"></div><!--  -->
+	            <div class="user-address fw h36_4 ovx-h ovy-a" data-sub="1"></div><!--  -->
+	          </div>
+	          <div class="ps-a t0 r0 fx fx-ac fx-jc f24 c-w tx-sh box60 add-item" data-sub="1">+</div><!--  -->
+	          <div class="forBuyer ps-a t0 r0 fx fx-ac fx-jc cd bg-fd b-rd tx-c c-w tx-sh mg-rx mg-tx box60 icon-mail-alt service-review" data-sub="1"><span class="f10">Drop a review</span></div><!-- [[continue]] -->
+	        </div>
+		    </div>
+		    <div class="fw banner-content ps-r bg z3 fx60">
+	        <div class="fw fx nav h50 sh-b tx-c">
+	          <div class="food-type menu-btn ps-r pd16z active fx15" data-type="1">Meal</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="2">Snacks</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="3">Drinks</div>
+	          <div class="food-type menu-btn ps-r pd16z fx15" data-type="4">Special</div>
+	        </div>
+	        <div class="banner-inner fh-50 ovx-h ovy-a pd75b menu-container" data-sub="1" data-type="1"></div><!--  -->
+	      </div>
+	      <div class="forBuyer go-to-cart fw h56 ps-f z3 fx fx-ac f16 b0 l0 b pd020 Orange c-w hideWhenShrink" data-sub="1">Proceed to cart</div><!--  -->
+	    </div>
+	    <!-- 4 general services -->
+	    
+  	</div>
 
 	  <div id="createView" class="Grey" data-function="View">
   		<div class="hr h60 fw bg sh-b fx fx-ac ps-a t0 l0 z1 Orange c-w">
@@ -488,6 +583,7 @@
 						<input type="number" name="discount" class="fw pd20 bg mg-b16 b4-r ba" placeholder="Add Discount">
 						<input type="submit" name="create-submit" class="fw ps-a b0 l0 b h56 pd020 fx fx-ac Orange c-w hideWhenShrink" value="SAVE & CONTINUE"> -->
 					</form>
+
 					<form id="food-add-form" class="create-form pd60b" data-catg="2" autocomplete="off">
 		  			<div class="fw ps-r fx fx-jc mg-b16">
 		  				<div class="box200 bg bs-r fx fx-ac fx-jc ov-h ba bg-im-ct ps-r">
@@ -507,6 +603,7 @@
 						<input type="number" name="discount" class="fw pd20 bg mg-b16 b4-r ba" placeholder="Add Discount">
 						<input type="submit" name="create-submit" class="fw ps-a b0 l0 b h56 pd020 fx fx-ac Orange c-w hideWhenShrink" value="SAVE & CONTINUE">
 					</form>
+
 					<form id="ticket-add-form" class="create-form pd60b" data-catg="3" autocomplete="off">
 	  				<div class="fw h200 bg bs-r fx fx-ac fx-jc ov-h ba ps-r mg-b16">
 	  					<img class="image-preview" src="res/img/icon/upload.png">

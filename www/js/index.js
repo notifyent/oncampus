@@ -272,6 +272,7 @@
                         , SERVICE_TYPE = r.servicetype
                         ;
                         //
+                        //move all these to successful login
                         App.changeViewTo('#landingView');
                         if (USERTYPE == 0) {//buyer
                             $('.forSeller').addClass('hd');
@@ -293,7 +294,6 @@
                             //
                         }
                     } else {//no data
-                        $('#splash-image').removeClass('blink');
                         if (Store.getItem('doneBoarding')) App.changeViewTo('#signupView');
                         else App.changeViewTo('#progress1View');
                     }
@@ -333,12 +333,17 @@
         }
         App.changeViewTo(View);
         
-    }).on('click', '#viewItems', function() {//[[continue]]
+    }).on('click', '#myItemsLink', function() {//[[continue]]
         // $('#brandName').text(USERNAME);
         // $('#brandAddress').text(ADDRESS);
         // $('#addItem').show();//for seller(owned)
         //
         //
+        App.changeViewTo('#itemsView');
+        $('.items-view-category').hide();
+        if (MAIN_CATEGORY == '4') $('.items-view-category[data-sub="'+SERVICE_TYPE+'"]').show();
+        else $('.items-view-category[data-catg="'+MAIN_CATEGORY+'"]').show();
+
         $('body').spin();
         $.ajax({
             url: MY_URL + "/fetch.php",
@@ -359,7 +364,10 @@
             complete: function() {$('body').unspin();}
         });
         //
-    }).on('click', '#addItem', function() {
+    }).on('click', '#addFoodItem', function() {
+    }).on('click', '.add-item', function() {
+        var catg = this.dataset.catg;
+        //[[continue]]
         $('.image-preview').attr('src', 'res/img/icon/upload.png');
         App.changeViewTo('#createView');
     }).on('click', '.tab-locator', function() {
@@ -766,7 +774,7 @@
                             nm: Name,
                             ds: Discount
                         }
-                        $('#items-container').prepend(buildItems([p], true));
+                        $('#food-menu-container').prepend(buildItems([p], true));
                         App.closeCurrentView();
                     },
                     error: function() { toast('Unable to connect'); },
@@ -845,7 +853,7 @@
                             nm: Name,
                             ds: Discount
                         }
-                        $('#items-container').prepend(buildItems([p], true));
+                        $('#food-menu-container').prepend(buildItems([p], true));
                         App.closeCurrentView();
                     },
                     error: function() { toast('Unable to connect'); },
@@ -892,26 +900,29 @@
         } else if (id.contains('item-add')) {
             counter.innerText = ++count;
         }
-    }).on('click', '#proceed-to-cart', function(e) {
+    }).on('click', '.go-to-cart', function(e) {
         var key = this.dataset.key;
-        var items = $('#items-container .item-count');
-        // console.log(items.length);
         var orders = [];
-        $.each(items, function() {
-            var tt = this.innerText;
-            // console.log(tt);
-            if (tt == 0) return;
-            var id = this.dataset.itemId;
-            var nm = this.dataset.itemName;
-            var pr = this.dataset.itemPrice;
-            var ds = this.dataset.itemDiscount;
-            orders.push({id: id, nm: nm, pr: parseFloat(pr).toFixed(2), ds: parseFloat(ds).toFixed(2), tt: tt});
-        });
+
+        switch(key) {
+            case 'food':
+                var items = $('#food-menu-container .item-count'); // console.log(items.length);
+                $.each(items, function() {
+                    var tt = this.innerText;// console.log(tt);
+                    if (tt == 0) return;
+                    var id = this.dataset.itemId;
+                    var nm = this.dataset.itemName;
+                    var pr = this.dataset.itemPrice;
+                    var ds = this.dataset.itemDiscount;
+                    orders.push({id: id, nm: nm, pr: parseFloat(pr).toFixed(2), ds: parseFloat(ds).toFixed(2), tt: tt});
+                });
+                break;
+        }
         // console.log(orders);//[[continue]]
         if (orders[0]) {
             ORDER = orders;//global
             App.changeViewTo('#invoiceView');
-            $('#invoice-content').html(buildInvoice(orders));
+            $('#invoice-content').html(buildInvoice(orders));//buildInvoiceForFood();
         }
     }).on('click', '#proceed-to-address', function(e) {//on invoice view
         App.changeViewTo('#dropoffView');
@@ -1110,30 +1121,8 @@
     }
     function buildItems(p, local) {//local(future)
         var h = '';
-        var view = '';
         if (MAIN_CATEGORY == '2') {//food
-            if (!local) {
-                var u = p[0];
-                //[[continue]][[now]]
-                view="<div class='hr h35v banner ov-h fw bg-im-cv bg ps-r sh-a fx cd' style='background-image: url();'>\
-                    <div class='fh z1'>\
-                        <div class='view-closer ps-r t0 l0 fx fx-ac fx-jc f24 c-w tx-sh icon-left box60'></div>\
-                        <div class='fw ps-r pd016 c-w tx-sh'>\
-                            <div class='fw tx-el b f20'></div>\
-                            <div class='fw h36_4 ovx-h ovy-a'></div>\
-                        </div>\
-                        <div id='addItem' class='ps-a t0 r0 fx fx-ac fx-jc f24 c-w tx-sh box60'>+</div>\
-                        <div id='serviceReview' class='ps-a t0 r0 fx fx-ac fx-jc cd bg-fd b-rd tx-c c-w tx-sh mg-rx mg-tx box60 icon-mail-alt'><span class='f10'>Drop a review</span></div>\
-                    </div>\
-                </div>\
-                <div class='fw banner-content ps-r bg z3 fx60'>\
-                    <div class='fw fx nav h50 sh-b tx-c'>\
-                        <div class='food-catg menu-btn ps-r pd16z active fx15' data-catg='1'>Meal</div>\
-                        <div class='food-catg menu-btn ps-r pd16z fx15' data-catg='2'>Snacks</div>\
-                        <div class='food-catg menu-btn ps-r pd16z fx15' data-catg='3'>Drinks</div>\
-                        <div class='food-catg menu-btn ps-r pd16z fx15' data-catg='4'>Special</div>\
-                    </div>";
-                }
+            
             p.forEach(function(c) {
                 h+="<div class='fw pd16 mg-tx sh-c' data-catg='"+c.cg+"'>\
                         <div class='fw fx fx-as'>\
@@ -1171,13 +1160,8 @@
         } else if (MAIN_CATEGORY == '4') {//food
             // if (SERVICE_TYPE == '1') {}
         }
-        if (local) return $('#items-container').append(h);
-        //
-        view+="<div id='items-container' class='banner-inner fh-50 ovx-h ovy-a pd75b' data-catg='1'>"+h+"</div>\
-            </div>\
-        <div id='proceed-to-cart' class='forBuyer fw h56 ps-f z3 fx fx-ac f16 b0 l0 b pd020 Orange c-w hideWhenShrink' data-key='food'>Proceed to cart</div>";
-        $('#packagesView').html(view);
-        App.changeViewTo('#packagesView');
+        if (local) return $('#food-menu-container').append(h);
+        
     }
     function buildInvoice(p) {
         var h = '';
