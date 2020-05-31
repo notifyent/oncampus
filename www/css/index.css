@@ -371,6 +371,9 @@ input[type=checkbox]:checked:after {
 .h80p {
     height: 80%;
 }
+.h200 {
+    height: 200px;
+}
 .fh {
     height: 100%;
 }

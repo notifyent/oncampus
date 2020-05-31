@@ -1,4 +1,12 @@
 /*
+ * on_item contains all items listed for sale.
+ * some would expire and some won't
+ * each food menu is an item with a long life
+ * each ticket entry is an item with an expiry life
+ * each gas size is an item with a long life
+ * each laundry item is an item with a long life
+ * graphics
+ * makeup
  * 
  */
  $(document).ready(function() {
@@ -45,6 +53,11 @@
     , USERNAME = null
     , CAMPUSKEY = 0
     , USERTYPE = 0
+    , MAIN_CATEGORY = 0
+    , SERVICE_TYPE = 0
+
+
+
     , PHONE = null
     , FULLNAME = null
     , ADDRESS = null
@@ -60,6 +73,9 @@
     , ORDER_DESTINATION = {}
     , ORDER_TOTAL = 0
     , ORDER_CHARGES = 0
+
+    , MAIN_CATEGORIES = ['', 'E-Commerce', 'Food Services', 'Ticketing', 'General Services']
+    , GENERAL_SERVICES = ['', 'Graphics Design', 'Make Up Artist', 'Dry Cleaning', 'Gas']
 
 
 
@@ -235,14 +251,15 @@
             , campus_key INT NOT NULL DEFAULT '0'
             , fullname VARCHAR NULL
             , address VARCHAR NULL
-            , category INT NOT NULL
+            , main_category INT NOT NULL
             , servicetype INT NOT NULL
             )`,[], s => {
+            //category=food,ticket,general
+            //servicetype=gas,graphics,laundry,makeup
                 s.executeSql("SELECT * FROM on_user WHERE id = ?", [1], (k, result) => {
                     var len = result.rows.length;
                     if (len > 0) {//data found
                         var r = result.rows.item(0);
-                        //
                           UUID = r.uuid
                         , EMAIL = r.email
                         , USERNAME = r.username
@@ -251,6 +268,8 @@
                         , PHONE = r.phone
                         , FULLNAME = r.fullname
                         , ADDRESS = r.address
+                        , MAIN_CATEGORY = r.main_category
+                        , SERVICE_TYPE = r.servicetype
                         ;
                         //
                         App.changeViewTo('#landingView');
@@ -258,12 +277,20 @@
                             $('.forSeller').addClass('hd');
                             $('.forBuyer').removeClass('hd');
                             // fetchEvents();
-                            fetchRestaurants();
-                        } else if (USERTYPE == 1) {
+                            fetchRestaurants('timeline');
+                        } else if (USERTYPE == 1) {//seller
                             $('.forSeller').removeClass('hd');
                             $('.forBuyer').addClass('hd');
                             // fetchWallet();
                             // fetchProgress();
+                            //
+                            $('.create-form:not([data-catg="'+MAIN_CATEGORY+'"])').hide();
+                            //
+                            var tx = '';
+                            if (MAIN_CATEGORY == '4') tx = GENERAL_SERVICES[SERVICE_TYPE];
+                            else tx = MAIN_CATEGORIES[MAIN_CATEGORY];
+                            $('#service-name').text(tx);
+                            //
                         }
                     } else {//no data
                         $('#splash-image').removeClass('blink');
@@ -307,10 +334,9 @@
         App.changeViewTo(View);
         
     }).on('click', '#viewItems', function() {//[[continue]]
-        App.changeViewTo('#packagesView');
-        $('#brandName').text(USERNAME);
-        $('#brandAddress').text(ADDRESS);
-        $('#addItem').show();//for seller(owned)
+        // $('#brandName').text(USERNAME);
+        // $('#brandAddress').text(ADDRESS);
+        // $('#addItem').show();//for seller(owned)
         //
         //
         $('body').spin();
@@ -325,16 +351,16 @@
             method: "GET",
             success: function(p) {
                 if (p.length > 0) {
-                    $('#items-container').html(buildItems(p, false));
+                    buildItems(p);
                 } else {
-                    toast('No items was found.');
+                    // toast('No items was found.');
                 }
             },
             complete: function() {$('body').unspin();}
         });
         //
     }).on('click', '#addItem', function() {
-        $('#create-image-preview').removeClass('hd');
+        $('.image-preview').attr('src', 'res/img/icon/upload.png');
         App.changeViewTo('#createView');
     }).on('click', '.tab-locator', function() {
         var Tab = this.dataset.tab;
@@ -367,13 +393,16 @@
         if (this.files && this.files[0]) {
             var reader = new FileReader();
             reader.onloadend = function(e) {
-                $('#create-image-preview').attr('src', this.result).addClass('fw');
-                // that.previousElementSibling.src = this.result;
-                // that.previousElementSibling.classList;
+                // $('#create-image-preview').attr('src', this.result).addClass('fw');
+                that.previousElementSibling.src = this.result;
+                that.previousElementSibling.classList.add('fw');
             }
             reader.readAsDataURL(this.files[0]);
         } else {
-            $('#create-image-preview').attr('src', 'res/img/icon/upload.png').removeClass('fw');
+            that.previousElementSibling.src = 'res/img/icon/upload.png';
+            that.previousElementSibling.classList.remove('fw');
+
+            // $('#create-image-preview').attr('src', 'res/img/icon/upload.png').removeClass('fw');
             // console.log('No file');
         }
 
@@ -585,7 +614,7 @@
                 }
                 
                 break;
-            case 'profile-edit-form':
+            case 'profile-edit-form'://[[continue]]
                 var Fullname = el.querySelector('input[name="fullname"]').value
                   , Username = el.querySelector('input[name="username"]').value
                   , Address = null
@@ -681,15 +710,15 @@
         var error = null;
 
         switch(id) {
-            case 'packages-add-form':
+            case 'food-add-form':
                 var Image = el.querySelector('input[name="images"]').files
-                  , Category = el.querySelector('select[name="category"]').value
+                  , Type = el.querySelector('select[name="item_type"]').value
                   , Name = el.querySelector('input[name="name"]').value
                   , Price = parseInt(el.querySelector('input[name="price"]').value, 10)
                   , Discount = el.querySelector('input[name="discount"]').value
                   ;
                 if (!Image || !Image[0] || Image[0].size > 2 * 1024 * 1024 && !error) error = "<div class='b bb pd10'>Image Error!</div><div class='pd10'>Please attach an image to your item (Maximum size = 2MB).</div>";
-                if (Category == '0' && !error) error = "<div class='b bb pd10'>Please select a Category</div><div class='pd10'>Select a category for this item.</div>";
+                if (Type == '0' && !error) error = "<div class='b bb pd10'>Please select a type</div><div class='pd10'>Select a type for this item.</div>";
                 if (!Name && !error) error = "<div class='b bb pd10'>Please add a Name</div><div class='pd10'>A name is required for meal description.</div>";
                 if ((!Price || isNaN(Price)) && !error) error = "<div class='b bb pd10'>Please add a Price</div><div class='pd10'>Price should include numbers only.</div>";
                 if (!Discount) Discount = 0;
@@ -705,10 +734,12 @@
                 $('body').spin();
                 //submit package
                 var fd = new FormData();
-                fd.append('action', 'addMenu');
+                fd.append('action', 'addItem');
                 fd.append('ownerID', UUID);
                 fd.append('image', Image[0]);
-                fd.append('category', Category);
+                fd.append('category', MAIN_CATEGORY);//e-commerce,food,ticket,general
+                fd.append('service', SERVICE_TYPE);//if general: gas,laundry,graphics,makeup
+                fd.append('item_type', Type);//meal,snacks...//regular,VIP...//
                 fd.append('name', Name);
                 fd.append('price', Price);
                 fd.append('discount', Discount);
@@ -729,7 +760,88 @@
                         var p = {
                             id: d.success,
                             pr: Price,
-                            cg: Category,
+                            cg: MAIN_CATEGORY,
+                            sv: SERVICE_TYPE,
+                            tp: Type,
+                            nm: Name,
+                            ds: Discount
+                        }
+                        $('#items-container').prepend(buildItems([p], true));
+                        App.closeCurrentView();
+                    },
+                    error: function() { toast('Unable to connect'); },
+                    complete: function() {
+                        el.dataset.disabled = 'false';
+                        $('body').unspin();
+                    }
+                });
+                break;
+            case 'ticket-add-form':
+                var Image = el.querySelector('input[name="images"]').files
+                  , Name = el.querySelector('input[name="name"]').value
+                  , Type = el.querySelector('select[name="item_type"]').value
+                  , Price = parseInt(el.querySelector('input[name="price"]').value, 10)
+                  , Discount = el.querySelector('input[name="discount"]').value
+
+                  , Category = el.querySelector('select[name="item_category"]').value
+                  , Venue = el.querySelector('textarea[name="venue"]').value
+                  , Amount = el.querySelector('input[name="amount"]').value
+                  
+                  ;
+                if (!Image || !Image[0] || Image[0].size > 2 * 1024 * 1024 && !error) error = "<div class='b bb pd10'>Image Error!</div><div class='pd10'>Please attach an image to your item (Maximum size = 2MB).</div>";
+                if (!Name && !error) error = "<div class='b bb pd10'>Please add a Name</div><div class='pd10'>A name is required to identify this event.</div>";
+                if (Type == '0' && !error) error = "<div class='b bb pd10'>Please select a type</div><div class='pd10'>Select a type for this ticket.</div>";
+                if ((!Price || isNaN(Price)) && !error) error = "<div class='b bb pd10'>Please add a Price</div><div class='pd10'>Price should include numbers only.</div>";
+                Discount = parseInt(Discount) || 0;
+
+                if (Category == '0' && !error) error = "<div class='b bb pd10'>Please select a category</div><div class='pd10'>Select a category for this event.</div>";
+                if (!Venue && !error) error = "<div class='b bb pd10'>Please add a Venue</div><div class='pd10'>Please state the venue for this event.</div>";
+                Amount = parseInt(Amount) || 0;
+
+                //
+                if (error) {
+                    var h = '<div class="pd10">'+error+'<div class="fw fx"><div class="fx60"></div><div class="pd516 b bg-ac c-o ac">OK</div></div></div>';
+
+                    $('#menuModal').show();
+                    $('#menuFlexer').html(h).zoom();
+
+                    return;
+                }
+                $('body').spin();
+                //submit package
+                var fd = new FormData();
+                fd.append('action', 'addItem');
+                fd.append('ownerID', UUID);
+                fd.append('image', Image[0]);
+                fd.append('item_category', Category);//tickets: pool,hangout,club...//[[new]]
+                fd.append('name', Name);
+                fd.append('venue', Venue);//[[new]]
+                fd.append('item_type', Type);//meal,snacks...//regular,VIP...//
+                fd.append('price', Price);
+                fd.append('discount', Discount);
+                fd.append('amount', Amount);//[[new]]
+                fd.append('category', MAIN_CATEGORY);//1.e-commerce,2.food,3.ticket,4.general
+                fd.append('service', SERVICE_TYPE);//if general: gas,laundry,graphics,makeup
+
+                $.ajax({
+                    url: MY_URL + "/send.php",
+                    data: fd,
+                    method: "POST",
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    dataType: 'json',
+                    timeout: 30000,
+                    success: function(d) {
+                        // var d = JSON.parse(d);
+                        if (d.error) return toast('Unable to add item');
+                        toast('Item added successfully');
+                        var p = {
+                            id: d.success,
+                            pr: Price,
+                            cg: MAIN_CATEGORY,
+                            sv: SERVICE_TYPE,
+                            tp: Type,
                             nm: Name,
                             ds: Discount
                         }
@@ -748,7 +860,8 @@
     }).on('click', '.menu-btn', function(e) {
         $(this).addClass('active').siblings('.active').removeClass('active');
         // change tabs appropriately
-    }).on('click', '.st-p', function(e) {
+    }).on('touchstart click', '.st-p', function(e) {
+        e.preventDefault();
         e.stopPropagation();
     }).on('click', '.Modal', function() {
         $(this).hide();
@@ -963,7 +1076,10 @@
             method: "GET",
             success: function(p) {
                 // console.log(p);
-                $('#carousel-buy-food').html(buildRestaurants(p));
+                if (p.length == 0) return;
+                if (source == 'timeline') {
+                    $('#carousel-buy-food').html(buildRestaurants(p));
+                }
             },
             complete: function() {$('body').unspin();}
         });
@@ -972,53 +1088,96 @@
         var h = '';
         p.forEach(function(c) {
             h+="<div class='w85p-c i-b ov-h mg-r sh-a ba ps-r bs-r'>\
-                    <div class='fw fh ov-h'>\
+                    <div class='fw fh fx fx-ac fx-jc ov-h bg-mod'>\
                         <img src='"+MY_URL+"/img/users/"+c.ui+".jpg' class='fw'>\
                     </div>\
                     <div class='fw ps-a tx-sh c-w bg-mod lh-i b0 l0 pd10'>\
-                        <div class='fw tx-el b f20'>"+c.nm+"</div>\
+                        <div class='fw b f20'>"+c.nm+"</div>\
                         <div class='fw ovx-h ovy-a f10'>"+c.ad+"</div>\
                     </div>\
                 </div>";
         });
-        return (h+h+h);
+        h+="<div class='w85p-c i-b ov-h mg-r sh-a ba ps-r bs-r'>\
+                <div class='fw fh fx fx-ac fx-jc ov-h bg-mod'>\
+                    <img src='res/img/icons/food.jpg' class='fw'>\
+                </div>\
+                <div class='fw ps-a tx-sh c-w bg-mod lh-i b0 l0 pd10'>\
+                    <div class='fw b f14'>More...</div>\
+                </div>\
+            </div>";
+        return (h);
         //
     }
     function buildItems(p, local) {//local(future)
         var h = '';
-        p.forEach(function(c) {
-            h+="<div class='fw pd16 mg-tx sh-c' data-catg='"+c.cg+"'>\
-                    <div class='fw fx fx-as'>\
-                        <div class='w120 xh120 ov-h'><img src='"+MY_URL+"/img/items/"+c.id+".jpg' class='fw bs-r'></div>\
-                        <div class='fx60 mg-lx'>\
-                            <div class='f16 b'>"+c.nm+"</div>\
-                            <div class='fw fx fx-ae mg-t'>\
-                                <div class='fx50'>\
-                                    <div class='"+(c.ds > 0 ? "tx-lt c-g f10" : "f16")+"'>&#8358;"+c.pr+"</div>"+
-                                    (c.ds > 0 ? "<div class='f16'>&#8358;"+(c.pr - c.ds)+"</div>" : "")+
-                                "</div>"+
-                                (c.ui !== UUID ? 
-                                "<div class='fx fx-je c-g'>\
-                                    <div class='item-edit f20 mg-rxx icon-edit' data-item-id='"+c.id+"'></div>\
-                                    <div class='item-remove f20 icon-logout' data-item-id='"+c.id+"'></div>\
-                                </div>":
-                                "<div class='fx fx-jc item-order-spinner' data-item-id='"+c.id+"'>\
-                                    <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-subtract'>-</div>\
-                                    <div class='fx fx-ac fx-jc w32 item-count tx-c"
-                                        +"' data-item-id='"+c.id
-                                        +"' data-item-name='"+c.nm.replace("'", '&apos;')
-                                        +"' data-item-price='"+c.pr
-                                        +"' data-item-discount='"+c.ds
-                                        +"'>0</div>\
-                                    <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-add'>+</div>\
-                                </div>"
-                                )+
-                            "</div>\
+        var view = '';
+        if (MAIN_CATEGORY == '2') {//food
+            if (!local) {
+                var u = p[0];
+                //[[continue]][[now]]
+                view="<div class='hr h35v banner ov-h fw bg-im-cv bg ps-r sh-a fx cd' style='background-image: url();'>\
+                    <div class='fh z1'>\
+                        <div class='view-closer ps-r t0 l0 fx fx-ac fx-jc f24 c-w tx-sh icon-left box60'></div>\
+                        <div class='fw ps-r pd016 c-w tx-sh'>\
+                            <div class='fw tx-el b f20'></div>\
+                            <div class='fw h36_4 ovx-h ovy-a'></div>\
                         </div>\
+                        <div id='addItem' class='ps-a t0 r0 fx fx-ac fx-jc f24 c-w tx-sh box60'>+</div>\
+                        <div id='serviceReview' class='ps-a t0 r0 fx fx-ac fx-jc cd bg-fd b-rd tx-c c-w tx-sh mg-rx mg-tx box60 icon-mail-alt'><span class='f10'>Drop a review</span></div>\
                     </div>\
-                </div>";
-        });
-        return h;
+                </div>\
+                <div class='fw banner-content ps-r bg z3 fx60'>\
+                    <div class='fw fx nav h50 sh-b tx-c'>\
+                        <div class='food-catg menu-btn ps-r pd16z active fx15' data-catg='1'>Meal</div>\
+                        <div class='food-catg menu-btn ps-r pd16z fx15' data-catg='2'>Snacks</div>\
+                        <div class='food-catg menu-btn ps-r pd16z fx15' data-catg='3'>Drinks</div>\
+                        <div class='food-catg menu-btn ps-r pd16z fx15' data-catg='4'>Special</div>\
+                    </div>";
+                }
+            p.forEach(function(c) {
+                h+="<div class='fw pd16 mg-tx sh-c' data-catg='"+c.cg+"'>\
+                        <div class='fw fx fx-as'>\
+                            <div class='w120 xh120 ov-h'><img src='"+MY_URL+"/img/items/"+c.id+".jpg' class='fw bs-r'></div>\
+                            <div class='fx60 mg-lx'>\
+                                <div class='f16 b'>"+c.nm+"</div>\
+                                <div class='fw fx fx-ae mg-t'>\
+                                    <div class='fx50'>\
+                                        <div class='"+(c.ds > 0 ? "tx-lt c-g f10" : "f16")+"'>&#8358;"+c.pr+"</div>"+
+                                        (c.ds > 0 ? "<div class='f16'>&#8358;"+(c.pr - c.ds)+"</div>" : "")+
+                                    "</div>"+
+                                    (c.ui == UUID ? 
+                                    "<div class='fx fx-je c-g'>\
+                                        <div class='item-edit f20 mg-rxx icon-edit' data-item-id='"+c.id+"'></div>\
+                                        <div class='item-remove f20 icon-logout' data-item-id='"+c.id+"'></div>\
+                                    </div>":
+                                    "<div class='fx fx-jc item-order-spinner' data-item-id='"+c.id+"'>\
+                                        <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-subtract'>-</div>\
+                                        <div class='fx fx-ac fx-jc w32 item-count tx-c"
+                                            +"' data-item-id='"+c.id
+                                            +"' data-item-name='"+c.nm.replace("'", '&apos;')
+                                            +"' data-item-price='"+c.pr
+                                            +"' data-item-discount='"+c.ds
+                                            +"'>0</div>\
+                                        <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-add'>+</div>\
+                                    </div>"
+                                    )+
+                                "</div>\
+                            </div>\
+                        </div>\
+                    </div>";
+            });
+        } else if (MAIN_CATEGORY == '3') {//ticket
+            //
+        } else if (MAIN_CATEGORY == '4') {//food
+            // if (SERVICE_TYPE == '1') {}
+        }
+        if (local) return $('#items-container').append(h);
+        //
+        view+="<div id='items-container' class='banner-inner fh-50 ovx-h ovy-a pd75b' data-catg='1'>"+h+"</div>\
+            </div>\
+        <div id='proceed-to-cart' class='forBuyer fw h56 ps-f z3 fx fx-ac f16 b0 l0 b pd020 Orange c-w hideWhenShrink' data-key='food'>Proceed to cart</div>";
+        $('#packagesView').html(view);
+        App.changeViewTo('#packagesView');
     }
     function buildInvoice(p) {
         var h = '';
@@ -1045,24 +1204,31 @@
     function localizeUserDetails(p) {
         SQL.transaction(function(i) {
             i.executeSql(
-                "INSERT INTO on_user(id,uuid,email,username,campus_key,user_type,fullname,address,category,servicetype,phone) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                "INSERT INTO on_user(id,uuid,email,username,campus_key,user_type,fullname,address,main_category,servicetype,phone) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
                 [1, p.ui, p.em, p.un, p.sk, p.ut, p.fn, p.ad, p.cg, p.sv, p.ph]
             );
         }, function(){}, function() {
             //
-              UUID = p.uuid
+              UUID = p.ui
             , EMAIL = p.em
             , USERNAME = p.un
             , CAMPUSKEY = p.sk
             , USERTYPE = p.ut
             , ADDRESS = p.ad
+            , MAIN_CATEGORY = p.cg
+            , SERVICE_TYPE = p.sv
             ;
 
             App.changeViewTo('#landingView');
-            if (USERTYPE == 0) {
+            if (USERTYPE == 0) {//buyer
                 $('.forSeller').addClass('hd');
                 $('.forBuyer').removeClass('hd');
-            } else if (USERTYPE == 1) {
+            } else if (USERTYPE == 1) {//seller
+                var tx = '';
+                if (MAIN_CATEGORY == '4') tx = GENERAL_SERVICES[SERVICE_TYPE];
+                else tx = MAIN_CATEGORIES[MAIN_CATEGORY];
+                //
+                $('#service-name').text(tx);
                 $('.forSeller').removeClass('hd');
                 $('.forBuyer').addClass('hd');
             }
