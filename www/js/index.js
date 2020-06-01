@@ -20,10 +20,10 @@
     // , MY_URL = "http://localhost/oncampus/api"
     // , RES_URL = "http://localhost/oncampus/api/chat"
     // 
-    // , MY_URL = "http://192.168.43.75/oncampus/api"
+    , MY_URL = "http://192.168.43.75/oncampus/api"
     // , RES_URL = "http://192.168.43.75/oncampus/api/chat"
     //
-    , MY_URL = "http://172.20.10.4/oncampus/api"
+    // , MY_URL = "http://172.20.10.4/oncampus/api"
     // , RES_URL = "http://172.20.10.4/oncampus/api/chat"
     //
     , BASE_URL = "http://localhost/oncampus"
@@ -54,7 +54,7 @@
     , CAMPUSKEY = 0
     , USERTYPE = 0
     , MAIN_CATEGORY = 0
-    , SERVICE_TYPE = 0
+    , SUB_CATEGORY = 0
 
 
 
@@ -76,7 +76,8 @@
 
     , MAIN_CATEGORIES = ['', 'E-Commerce', 'Food Services', 'Ticketing', 'General Services']
     , GENERAL_SERVICES = ['', 'Graphics Design', 'Make Up Artist', 'Dry Cleaning', 'Gas']
-
+    , EVENTS = ['', 'Club Party', 'Pool Party', 'Hangout', 'Concert', 'Movie Ticket', 'House Party', 'Gaming Competition', 'Departmental Party', 'Departmental Dinner']
+    , TICKETS = ['', 'Regular', 'Couple', 'VIP', 'VVIP', 'Table for 4', 'Table for 5', 'Table for 6', 'Table for 10']
 
 
 
@@ -252,10 +253,10 @@
             , fullname VARCHAR NULL
             , address VARCHAR NULL
             , main_category INT NOT NULL
-            , servicetype INT NOT NULL
+            , subcategory INT NOT NULL
             )`,[], s => {
             //category=food,ticket,general
-            //servicetype=gas,graphics,laundry,makeup
+            //subcategory=gas,graphics,laundry,makeup
                 s.executeSql("SELECT * FROM on_user WHERE id = ?", [1], (k, result) => {
                     var len = result.rows.length;
                     if (len > 0) {//data found
@@ -269,30 +270,9 @@
                         , FULLNAME = r.fullname
                         , ADDRESS = r.address
                         , MAIN_CATEGORY = r.main_category
-                        , SERVICE_TYPE = r.servicetype
+                        , SUB_CATEGORY = r.subcategory
                         ;
-                        //
-                        //move all these to successful login
-                        App.changeViewTo('#landingView');
-                        if (USERTYPE == 0) {//buyer
-                            $('.forSeller').addClass('hd');
-                            $('.forBuyer').removeClass('hd');
-                            // fetchEvents();
-                            fetchRestaurants('timeline');
-                        } else if (USERTYPE == 1) {//seller
-                            $('.forSeller').removeClass('hd');
-                            $('.forBuyer').addClass('hd');
-                            // fetchWallet();
-                            // fetchProgress();
-                            //
-                            $('.create-form:not([data-catg="'+MAIN_CATEGORY+'"])').hide();
-                            //
-                            var tx = '';
-                            if (MAIN_CATEGORY == '4') tx = GENERAL_SERVICES[SERVICE_TYPE];
-                            else tx = MAIN_CATEGORIES[MAIN_CATEGORY];
-                            $('#service-name').text(tx);
-                            //
-                        }
+                        preparePage();
                     } else {//no data
                         if (Store.getItem('doneBoarding')) App.changeViewTo('#signupView');
                         else App.changeViewTo('#progress1View');
@@ -300,6 +280,29 @@
                 });
             });
     }, function() {/*error*/}, function() {/*success*/});
+    function preparePage() {
+        //move all these to successful login
+        App.changeViewTo('#landingView');
+        if (USERTYPE == 0) {//buyer
+            $('.forSeller').addClass('hd');
+            $('.forBuyer').removeClass('hd');
+            fetchEvents('timeline');
+            fetchRestaurants('timeline');
+        } else if (USERTYPE == 1) {//seller
+            $('.forSeller').removeClass('hd');
+            $('.forBuyer').addClass('hd');
+            // fetchWallet();
+            // fetchProgress();
+            //
+            $('.create-form:not([data-catg="'+MAIN_CATEGORY+'"])').hide();
+            //
+            var tx = '';
+            if (MAIN_CATEGORY == '4') tx = GENERAL_SERVICES[SUB_CATEGORY];
+            else tx = MAIN_CATEGORIES[MAIN_CATEGORY];
+            $('#service-name').text(tx);
+            //
+        }
+    }
 
 
 
@@ -333,38 +336,66 @@
         }
         App.changeViewTo(View);
         
-    }).on('click', '#myItemsLink', function() {//[[continue]]
-        // $('#brandName').text(USERNAME);
-        // $('#brandAddress').text(ADDRESS);
-        // $('#addItem').show();//for seller(owned)
-        //
-        //
+    }).on('click', '#myItemsLink, .shop-link', function() {//[[continue]]
         App.changeViewTo('#itemsView');
         $('.items-view-category').hide();
-        if (MAIN_CATEGORY == '4') $('.items-view-category[data-sub="'+SERVICE_TYPE+'"]').show();
-        else $('.items-view-category[data-catg="'+MAIN_CATEGORY+'"]').show();
 
+        var catg, sub, shopId, shopName, shopAddress, folder, $v;
+        if (this.id == 'myItemsLink') {//owner's item.
+            catg = MAIN_CATEGORY;
+            sub = SUB_CATEGORY;
+            shopId = UUID;
+            shopName = USERNAME;
+            shopAddress = ADDRESS;
+            // folder = 'users';
+        } else {//highlighted items
+            catg = this.dataset.catg;
+            sub = this.dataset.sub;
+            shopId = this.dataset.shopId;
+            shopName = this.dataset.shopName;
+            shopAddress = this.dataset.shopAddress;
+        }
+        if (catg == '2') folder = 'users';//food, others may join [[watch]]
+        else folder = 'items';
+        //if catg == '3' //no banner.[[continue]]
+        //
+        if (catg == '4') {
+            $('.items-view-category[data-sub="'+sub+'"]').show();
+            //more to come???
+        } else {
+            $v = $('.items-view-category[data-catg="'+catg+'"]');
+            $v.show();
+            $v.find('.shop-banner').css('backgroundImage', 'url('+MY_URL+'/img/'+folder+'/'+shopId+'.jpg)');
+            $v.find('.display-name').text(shopName);
+            if (catg == '3') $v.find('.event-type').text(EVENTS[this.dataset.eventType]);
+            $v.find('.user-address').text(shopAddress);
+        }
         $('body').spin();
         $.ajax({
             url: MY_URL + "/fetch.php",
             data: {
                 action: 'fetchItems',
-                shopID: UUID
+                shopID: shopId,
+                catg: catg,
+                sub: sub
             },
             timeout: 30000,
             dataType: 'json',
             method: "GET",
             success: function(p) {
                 if (p.length > 0) {
-                    buildItems(p);
+                    buildItems(p, true, false);
+                    //if catg=='3' && user//change name venue etc.[[continue]]
                 } else {
-                    // toast('No items was found.');
+                    if (catg == '3') {//events
+                        $v.find('.shop-banner').css('backgroundImage', 'url('+MY_URL+'/img/users/'+shopId+'.jpg)');
+                    }
                 }
             },
             complete: function() {$('body').unspin();}
         });
         //
-    }).on('click', '#addFoodItem', function() {
+    }).on('click', '#addFoodItem', function() {//[[continue]]
     }).on('click', '.add-item', function() {
         var catg = this.dataset.catg;
         //[[continue]]
@@ -480,7 +511,7 @@
                                 , fn: null
                                 , ad: null
                                 , cg: '0'
-                                , sv: '0'
+                                , sb: '0'
                             };
                             // console.log(data);
                             // store in db and go home
@@ -508,7 +539,7 @@
                   , Username = el.querySelector('input[name="username"]').value
                   , Address = el.querySelector('textarea[name="officeAddress"]').value
                   , Category = el.querySelector('#category-select').value
-                  , ServiceType = el.querySelector('#services-select').value
+                  , SubCategory = el.querySelector('#services-select').value
                   , Phone = el.querySelector('input[name="phone"]').value
                   , Pass = el.querySelector('input[name="password"]').value
                   , Campus = el.querySelector('select[name="institute"]').value;
@@ -519,7 +550,7 @@
                 if (!Username && !error) error = "<div class='b bb pd10'>Display/Brand Name is Required</div><div class='pd10'>Your Display/Brand name would be displayed on your profile.</div>";
                 if (!Address && !error) error = "<div class='b bb pd10'>Your Address is Required</div><div class='pd10'>Your address is required for pickup.</div>";
                 if (Category == '0' && !error) error = "<div class='b bb pd10'>You must select your business category</div>";
-                if (Category == '4' && ServiceType == '0' && !error) error = "<div class='b bb pd10'>You must select your service type</div>";
+                if (Category == '4' && SubCategory == '0' && !error) error = "<div class='b bb pd10'>You must select your service type</div>";
                 if (!Phone && !error) error = "<div class='b bb pd10'>Provide your phone number</div><div class='pd10'>Your phone number is required for notifications.</div>";
                 if ((Pass.length < 8 || Pass.length > 32) && !error) error = "<div class='b bb pd10'>Password not accepted</div><div class='pd10'>Password must be between 8 - 32 characters long.</div>";
                 if (Campus == 0 && !error) error = "<div class='b bb pd10'>Please select your institution</div><div class='pd10'>Select your institution to help us serve your items to nearby buyers.</div>";
@@ -546,7 +577,7 @@
                         fullname: Fullname,
                         address: Address,
                         category: Category,
-                        servicetype: ServiceType,
+                        subcategory: SubCategory,
                         phone: Phone,
                         password: Pass,
                         usertype: '1',
@@ -568,7 +599,7 @@
                                 , fn: Fullname
                                 , ad: Address
                                 , cg: Category
-                                , sv: ServiceType
+                                , sb: SubCategory
                             };
                             // console.log(data);
                             // store in db and go home
@@ -720,13 +751,13 @@
         switch(id) {
             case 'food-add-form':
                 var Image = el.querySelector('input[name="images"]').files
-                  , Type = el.querySelector('select[name="item_type"]').value
+                  , ItemType = el.querySelector('select[name="item_type"]').value
                   , Name = el.querySelector('input[name="name"]').value
                   , Price = parseInt(el.querySelector('input[name="price"]').value, 10)
                   , Discount = el.querySelector('input[name="discount"]').value
                   ;
                 if (!Image || !Image[0] || Image[0].size > 2 * 1024 * 1024 && !error) error = "<div class='b bb pd10'>Image Error!</div><div class='pd10'>Please attach an image to your item (Maximum size = 2MB).</div>";
-                if (Type == '0' && !error) error = "<div class='b bb pd10'>Please select a type</div><div class='pd10'>Select a type for this item.</div>";
+                if (ItemType == '0' && !error) error = "<div class='b bb pd10'>Please select a type</div><div class='pd10'>Select a type for this item.</div>";
                 if (!Name && !error) error = "<div class='b bb pd10'>Please add a Name</div><div class='pd10'>A name is required for meal description.</div>";
                 if ((!Price || isNaN(Price)) && !error) error = "<div class='b bb pd10'>Please add a Price</div><div class='pd10'>Price should include numbers only.</div>";
                 if (!Discount) Discount = 0;
@@ -746,8 +777,8 @@
                 fd.append('ownerID', UUID);
                 fd.append('image', Image[0]);
                 fd.append('category', MAIN_CATEGORY);//e-commerce,food,ticket,general
-                fd.append('service', SERVICE_TYPE);//if general: gas,laundry,graphics,makeup
-                fd.append('item_type', Type);//meal,snacks...//regular,VIP...//
+                fd.append('subcategory', SUB_CATEGORY);//if general: gas,laundry,graphics,makeup
+                fd.append('item_type', ItemType);//meal,snacks...//regular,VIP...//
                 fd.append('name', Name);
                 fd.append('price', Price);
                 fd.append('discount', Discount);
@@ -769,12 +800,12 @@
                             id: d.success,
                             pr: Price,
                             cg: MAIN_CATEGORY,
-                            sv: SERVICE_TYPE,
-                            tp: Type,
+                            sb: SUB_CATEGORY,
+                            tp: ItemType,
                             nm: Name,
                             ds: Discount
                         }
-                        $('#food-menu-container').prepend(buildItems([p], true));
+                        $('#food-menu-container').prepend(buildItems([p], true, true));
                         App.closeCurrentView();
                     },
                     error: function() { toast('Unable to connect'); },
@@ -787,32 +818,51 @@
             case 'ticket-add-form':
                 var Image = el.querySelector('input[name="images"]').files
                   , Name = el.querySelector('input[name="name"]').value
-                  , Type = el.querySelector('select[name="item_type"]').value
-                  , Price = parseInt(el.querySelector('input[name="price"]').value, 10)
-                  , Discount = el.querySelector('input[name="discount"]').value
-
-                  , Category = el.querySelector('select[name="item_category"]').value
+                  , ItemType = el.querySelector('select[name="item_type"]').value
+                  // , Price = parseInt(el.querySelector('input[name="price"]').value, 10)
+                  // , Discount = el.querySelector('input[name="discount"]').value
+                  // , Amount = el.querySelector('input[name="amount"]').value
                   , Venue = el.querySelector('textarea[name="venue"]').value
-                  , Amount = el.querySelector('input[name="amount"]').value
+
+                  , Year = el.querySelector('input[name="year"]').value
+                  , Month = el.querySelector('input[name="month"]').value
+                  , Day = el.querySelector('input[name="day"]').value
+                  , Hour = el.querySelector('input[name="hour"]').value
+                  , Min = el.querySelector('input[name="min"]').value
                   
+                  , AllTickets = []
+                  , LocalTickets = []
+                  , EventDate = Year + '-' + Month + '-' + Day + ' ' + Hour + ':' + Min
                   ;
+                var cgs = el.querySelectorAll('.ticket_category');
+                cgs.forEach(function(t) {
+                    var TicketType = t.querySelector('select[name="category"]').value;
+                    var Price = parseInt(t.querySelector('input[name="price"]').value, 10);
+                    var Discount = parseInt(t.querySelector('input[name="discount"]').value, 10) || 0;
+                    var Seats = parseInt(t.querySelector('input[name="seats"]').value, 10) || 0;
+                      ;
+                    if (TicketType == '0' || isNaN(Price)) return;
+                    var entry = [TicketType, Price, Discount, Seats];
+                    var ticket = {nm: TicketType, pr: Price, ds: Discount, st: Seats};
+                    // console.log(entry);
+                    AllTickets.push(entry);
+                    LocalTickets.push(ticket);
+                });
+
                 if (!Image || !Image[0] || Image[0].size > 2 * 1024 * 1024 && !error) error = "<div class='b bb pd10'>Image Error!</div><div class='pd10'>Please attach an image to your item (Maximum size = 2MB).</div>";
+                if (ItemType == '0' && !error) error = "<div class='b bb pd10'>Please select a type</div><div class='pd10'>Select a type for this ticket.</div>";
                 if (!Name && !error) error = "<div class='b bb pd10'>Please add a Name</div><div class='pd10'>A name is required to identify this event.</div>";
-                if (Type == '0' && !error) error = "<div class='b bb pd10'>Please select a type</div><div class='pd10'>Select a type for this ticket.</div>";
-                if ((!Price || isNaN(Price)) && !error) error = "<div class='b bb pd10'>Please add a Price</div><div class='pd10'>Price should include numbers only.</div>";
-                Discount = parseInt(Discount) || 0;
-
-                if (Category == '0' && !error) error = "<div class='b bb pd10'>Please select a category</div><div class='pd10'>Select a category for this event.</div>";
                 if (!Venue && !error) error = "<div class='b bb pd10'>Please add a Venue</div><div class='pd10'>Please state the venue for this event.</div>";
-                Amount = parseInt(Amount) || 0;
-
+                // if ((!Price || isNaN(Price)) && !error) error = "<div class='b bb pd10'>Please add a Price</div><div class='pd10'>Price should include numbers only.</div>";
+                // Discount = parseInt(Discount) || 0;
+                // Amount = parseInt(Amount) || 0;
+                // if (Category == '0' && !error) error = "<div class='b bb pd10'>Please select a category</div><div class='pd10'>Select a category for this event.</div>";
+                if (AllTickets.length == 0 && !error) error = "<div class='b bb pd10'>Please add a Ticket</div><div class='pd10'>You must add at least 1 ticket with a complete information.</div>";
                 //
                 if (error) {
                     var h = '<div class="pd10">'+error+'<div class="fw fx"><div class="fx60"></div><div class="pd516 b bg-ac c-o ac">OK</div></div></div>';
-
                     $('#menuModal').show();
                     $('#menuFlexer').html(h).zoom();
-
                     return;
                 }
                 $('body').spin();
@@ -821,15 +871,17 @@
                 fd.append('action', 'addItem');
                 fd.append('ownerID', UUID);
                 fd.append('image', Image[0]);
-                fd.append('item_category', Category);//tickets: pool,hangout,club...//[[new]]
                 fd.append('name', Name);
-                fd.append('venue', Venue);//[[new]]
-                fd.append('item_type', Type);//meal,snacks...//regular,VIP...//
-                fd.append('price', Price);
-                fd.append('discount', Discount);
-                fd.append('amount', Amount);//[[new]]
+                fd.append('venue', Venue);
+                fd.append('event_date', EventDate);
+                fd.append('item_type', ItemType);//tickets: pool,hangout,club...//[[new]] no mote//regular,VIP...
+                fd.append('all_tickets', JSON.stringify(AllTickets));//regular,VIP...//all in one JSON stringified object
+                // fd.append('category', Category);
+                fd.append('price', 0);
+                fd.append('discount', 0);
+                // fd.append('amount', Amount);//[[new]]
                 fd.append('category', MAIN_CATEGORY);//1.e-commerce,2.food,3.ticket,4.general
-                fd.append('service', SERVICE_TYPE);//if general: gas,laundry,graphics,makeup
+                fd.append('subcategory', SUB_CATEGORY);//if general: gas,laundry,graphics,makeup
 
                 $.ajax({
                     url: MY_URL + "/send.php",
@@ -844,16 +896,25 @@
                         // var d = JSON.parse(d);
                         if (d.error) return toast('Unable to add item');
                         toast('Item added successfully');
-                        var p = {
+                        //change the banner info [[continue]][[now]]
+                        // tp: ItemType,
+                        // nm: Name,
+                        // ad: Venue,
+                        /*
+                        $v = $('.items-view-category[data-catg="'+catg+'"]');
+                        $v.show();
+                        $v.find('.shop-banner').css('backgroundImage', 'url('+MY_URL+'/img/'+folder+'/'+shopId+'.jpg)');
+                        $v.find('.display-name').text(shopName);
+                        if (catg == '3') $v.find('.event-type').text(EVENTS[this.dataset.eventType]);
+                        $v.find('.user-address').text(shopAddress);
+                        */
+                        var p = {//[[continue]]
+                            ui: UUID,
                             id: d.success,
-                            pr: Price,
-                            cg: MAIN_CATEGORY,
-                            sv: SERVICE_TYPE,
-                            tp: Type,
-                            nm: Name,
-                            ds: Discount
+                            cg: '3',
+                            ts: LocalTickets
                         }
-                        $('#food-menu-container').prepend(buildItems([p], true));
+                        $('#food-menu-container').prepend(buildItems([p], true, true));
                         App.closeCurrentView();
                     },
                     error: function() { toast('Unable to connect'); },
@@ -865,6 +926,36 @@
                 break;
             default:
         }
+    }).on('click', '.ticket_closer', function(e) {
+        $(this).closest('.ticket_category').remove();
+        var el = document.querySelector('#ticket_add');
+        var next = Number(el.dataset.next) - 1;
+        el.dataset.next = next;
+        var $counts = $('.ticket_count');
+        $.each($counts, function(i) {
+            this.innerText = (i + 1);
+        });
+    }).on('click', '#ticket_add', function(e) {
+        var next = this.dataset.next;
+        this.dataset.next = Number(next) + 1;
+        var h="<div class='fw ticket_category remove pd10 b4-r mg-b16 Orange c-w'>\
+                <div class='fw f12 mg-b ps-r b'>ADD A TICKET (<span class='ticket_count'>"+next+"</span>)<span class='ticket_closer ps-a lh0 mg-tm t0 r0'>x</span></div>\
+                <select name='category' class='fw pd20 bg mg-b16 b4-r ba'>\
+                    <option value='0'>Select Ticket Category</option>\
+                    <option value='1'>Regular</option>\
+                    <option value='2'>Couple</option>\
+                    <option value='3'>VIP</option>\
+                    <option value='4'>VVIP</option>\
+                    <option value='5'>Table for 4</option>\
+                    <option value='6'>Table for 5</option>\
+                    <option value='7'>Table for 6</option>\
+                    <option value='8'>Table for 10</option>\
+                </select>\
+                <input type='number' name='price' class='fw pd20 bg mg-b16 b4-r ba' placeholder='Price'>\
+                <input type='number' name='discount' class='fw pd20 bg mg-b16 b4-r ba' placeholder='Add Discount'>\
+                <input type='number' name='seats' class='fw pd20 bg b4-r ba' placeholder='Available Seats'>\
+            </div>";
+        $(this).before(h);
     }).on('click', '.menu-btn', function(e) {
         $(this).addClass('active').siblings('.active').removeClass('active');
         // change tabs appropriately
@@ -901,12 +992,25 @@
             counter.innerText = ++count;
         }
     }).on('click', '.go-to-cart', function(e) {
-        var key = this.dataset.key;
+        var catg = this.dataset.catg;
+        var sub = this.dataset.sub;
+        var $menu;
+        if (catg == '4') {
+            $menu = $('.menu-container[data-sub="'+sub+'"]');
+            //
+        } else {
+            $menu = $('.menu-container[data-catg="'+catg+'"]');
+            //
+        }
+
         var orders = [];
 
-        switch(key) {
-            case 'food':
-                var items = $('#food-menu-container .item-count'); // console.log(items.length);
+        switch(catg) {
+            case '1':
+                //e-commerce
+                break;
+            case '2':
+                var items = $menu.find('.item-count'); // console.log(items.length);
                 $.each(items, function() {
                     var tt = this.innerText;// console.log(tt);
                     if (tt == 0) return;
@@ -922,7 +1026,7 @@
         if (orders[0]) {
             ORDER = orders;//global
             App.changeViewTo('#invoiceView');
-            $('#invoice-content').html(buildInvoice(orders));//buildInvoiceForFood();
+            $('#invoice-content').html(buildInvoice(orders, catg));//[[continue]]
         }
     }).on('click', '#proceed-to-address', function(e) {//on invoice view
         App.changeViewTo('#dropoffView');
@@ -1073,6 +1177,28 @@
 
 
 
+    function fetchEvents(source) {//timeline, search,
+        $.ajax({
+            url: MY_URL + "/fetch.php",
+            data: {
+                action: 'fetchEvents',
+                campus: CAMPUSKEY,
+                // catg: '3',
+                shopID: UUID
+            },
+            timeout: 30000,
+            dataType: 'json',
+            method: "GET",
+            success: function(p) {
+                // console.log(p);
+                if (p.length == 0) return;
+                if (source == 'timeline') {
+                    $('#carousel-buy-ticket').html(buildEvents(p));
+                }
+            },
+            complete: function() {$('body').unspin();}
+        });
+    }
     function fetchRestaurants(source) {//timeline, search,
         $.ajax({
             url: MY_URL + "/fetch.php",
@@ -1080,7 +1206,7 @@
                 action: 'fetchRestaurants',
                 campus: CAMPUSKEY,
                 // catg: '2',
-                key: UUID
+                shopID: UUID
             },
             timeout: 30000,
             dataType: 'json',
@@ -1095,44 +1221,122 @@
             complete: function() {$('body').unspin();}
         });
     }
+    function buildEvents(p) {//[[continue]]
+        var h = '';
+        p.forEach(function(c) {
+            h+="<div class='w85p-c i-b ov-h mg-r sh-a ba ps-r bs-r shop-link"
+                    +"' data-shop-id='"+c.id
+                    +"' data-catg='"+c.cg
+                    +"' data-sub='"+c.sb
+                    +"' data-shop-name='"+c.nm
+                    +"' data-event-type='"+c.tp
+                    +"' data-shop-address='"+c.ad
+                    +"'>\
+                    <div class='fw fh fx fx-ac fx-jc ov-h bg-mod'>\
+                        <img src='"+MY_URL+"/img/items/"+c.id+".jpg' class='fw'>\
+                    </div>\
+                    <div class='fw ps-a tx-sh c-w caption lh-i b0 l0 pd10'>\
+                        <div class='fw b f16'>"+c.nm+"</div>\
+                        <div class='fw b f16 c-o'>"+EVENTS[c.tp]+"</div>\
+                        <div class='fw b c-o'>"+c.dt+"</div>\
+                        <div class='fw f10'>"+c.ad+"</div>\
+                    </div>\
+                </div>";
+        });
+        h+="<div class='w85p-c i-b ov-h mg-r sh-a ba ps-r bs-r more-services' data-catg='3'>\
+                <div class='fw fh fx fx-ac fx-jc ov-h bg-mod'>\
+                    <img src='res/img/icon/party.jpg' class='fw'>\
+                </div>\
+                <div class='fw ps-a tx-sh c-w caption lh-i b0 l0 pd10'>\
+                    <div class='fw b f14'>More...</div>\
+                    <div class='fw ovx-h ovy-a f10'>Browse more events</div>\
+                </div>\
+            </div>";
+        return (h);
+    }
     function buildRestaurants(p) {
         var h = '';
         p.forEach(function(c) {
-            h+="<div class='w85p-c i-b ov-h mg-r sh-a ba ps-r bs-r'>\
+            h+="<div class='w85p-c i-b ov-h mg-r sh-a ba ps-r bs-r shop-link"
+                    +"' data-shop-id='"+c.ui
+                    +"' data-catg='"+c.cg
+                    +"' data-sub='"+c.tp
+                    +"' data-shop-name='"+c.nm
+                    +"' data-shop-address='"+c.ad
+                    +"'>\
                     <div class='fw fh fx fx-ac fx-jc ov-h bg-mod'>\
                         <img src='"+MY_URL+"/img/users/"+c.ui+".jpg' class='fw'>\
                     </div>\
-                    <div class='fw ps-a tx-sh c-w bg-mod lh-i b0 l0 pd10'>\
-                        <div class='fw b f20'>"+c.nm+"</div>\
+                    <div class='fw ps-a tx-sh c-w caption lh-i b0 l0 pd10'>\
+                        <div class='fw b f16'>"+c.nm+"</div>\
                         <div class='fw ovx-h ovy-a f10'>"+c.ad+"</div>\
                     </div>\
                 </div>";
         });
-        h+="<div class='w85p-c i-b ov-h mg-r sh-a ba ps-r bs-r'>\
+        h+="<div class='w85p-c i-b ov-h mg-r sh-a ba ps-r bs-r more-services' data-catg='2'>\
                 <div class='fw fh fx fx-ac fx-jc ov-h bg-mod'>\
-                    <img src='res/img/icons/food.jpg' class='fw'>\
+                    <img src='res/img/icon/food.jpg' class='fw'>\
                 </div>\
-                <div class='fw ps-a tx-sh c-w bg-mod lh-i b0 l0 pd10'>\
+                <div class='fw ps-a tx-sh c-w caption lh-i b0 l0 pd10'>\
                     <div class='fw b f14'>More...</div>\
+                    <div class='fw ovx-h ovy-a f10'>Browse more restaurants</div>\
                 </div>\
             </div>";
         return (h);
         //
     }
-    function buildItems(p, local) {//local(future)
+    function buildItems(p, user, local) {//local(future)
         var h = '';
-        if (MAIN_CATEGORY == '2') {//food
-            
+        var catg = p[0].cg;
+        //
+        if (catg == '1') {//e-commerce
+            //
+        } else if (catg == '2') {//food
             p.forEach(function(c) {
-                h+="<div class='fw pd16 mg-tx sh-c' data-catg='"+c.cg+"'>\
+            h+="<div class='fw pd16 mg-tx sh-c' data-type='"+c.tp+"'>\
+                    <div class='fw fx fx-as'>\
+                        <div class='w120 xh120 ov-h'><img src='"+MY_URL+"/img/items/"+c.id+".jpg' class='fw bs-r'></div>\
+                        <div class='fx60 mg-lx'>\
+                            <div class='f16 b'>"+c.nm+"</div>\
+                            <div class='fw fx fx-ae mg-t'>\
+                                <div class='fx50'>\
+                                    <div class='"+(c.ds > 0 ? "tx-lt c-g f10" : "f16")+"'>&#8358;"+c.pr+"</div>"+
+                                    (c.ds > 0 ? "<div class='f16'>&#8358;"+(c.pr - c.ds)+"</div>" : "")+
+                                "</div>"+
+                                (c.ui == UUID ? 
+                                "<div class='fx fx-je c-g'>\
+                                    <div class='item-edit f20 mg-rxx icon-edit' data-item-id='"+c.id+"'></div>\
+                                    <div class='item-remove f20 icon-logout' data-item-id='"+c.id+"'></div>\
+                                </div>":
+                                "<div class='fx fx-jc item-order-spinner' data-item-id='"+c.id+"'>\
+                                    <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-subtract'>-</div>\
+                                    <div class='fx fx-ac fx-jc w32 item-count tx-c"
+                                        +"' data-item-id='"+c.id
+                                        +"' data-item-name='"+c.nm.replace("'", '&apos;')
+                                        +"' data-item-price='"+c.pr
+                                        +"' data-item-discount='"+c.ds
+                                        +"'>0</div>\
+                                    <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-add'>+</div>\
+                                </div>"
+                                )+
+                            "</div>\
+                        </div>\
+                    </div>\
+                </div>";
+            });
+            var $v = $('.menu-container[data-catg="2"]');
+            if (local) $v.append(h); else $v.html(h);
+        } else if (catg == '3') {//ticket
+            p.forEach(function(c) {//c.ts[[continue]]
+                c.ts.forEach(function(v) {
+                    h+="<div class='fw pd16 mg-tx sh-c'>\
                         <div class='fw fx fx-as'>\
-                            <div class='w120 xh120 ov-h'><img src='"+MY_URL+"/img/items/"+c.id+".jpg' class='fw bs-r'></div>\
                             <div class='fx60 mg-lx'>\
-                                <div class='f16 b'>"+c.nm+"</div>\
+                                <div class='f16 b'>"+TICKETS[v.nm]+"</div>\
                                 <div class='fw fx fx-ae mg-t'>\
                                     <div class='fx50'>\
-                                        <div class='"+(c.ds > 0 ? "tx-lt c-g f10" : "f16")+"'>&#8358;"+c.pr+"</div>"+
-                                        (c.ds > 0 ? "<div class='f16'>&#8358;"+(c.pr - c.ds)+"</div>" : "")+
+                                        <div class='"+(v.ds > 0 ? "tx-lt c-g f10" : "f16")+"'>&#8358;"+v.pr+"</div>"+
+                                        (v.ds > 0 ? "<div class='f16'>&#8358;"+(v.pr - v.ds)+"</div>" : "")+
                                     "</div>"+
                                     (c.ui == UUID ? 
                                     "<div class='fx fx-je c-g'>\
@@ -1143,9 +1347,9 @@
                                         <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-subtract'>-</div>\
                                         <div class='fx fx-ac fx-jc w32 item-count tx-c"
                                             +"' data-item-id='"+c.id
-                                            +"' data-item-name='"+c.nm.replace("'", '&apos;')
-                                            +"' data-item-price='"+c.pr
-                                            +"' data-item-discount='"+c.ds
+                                            +"' data-item-name='"+TICKETS[v.nm]
+                                            +"' data-item-price='"+v.pr
+                                            +"' data-item-discount='"+v.ds
                                             +"'>0</div>\
                                         <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-add'>+</div>\
                                     </div>"
@@ -1154,14 +1358,14 @@
                             </div>\
                         </div>\
                     </div>";
+                });
             });
-        } else if (MAIN_CATEGORY == '3') {//ticket
-            //
-        } else if (MAIN_CATEGORY == '4') {//food
-            // if (SERVICE_TYPE == '1') {}
+            var $v = $('.menu-container[data-catg="3"]');
+            if (local) $v.append(h); else $v.html(h);
+        } else if (catg == '4') {//food
+            var sub = p[0].sb;
+            // if (sub == '1') {}
         }
-        if (local) return $('#food-menu-container').append(h);
-        
     }
     function buildInvoice(p) {
         var h = '';
@@ -1188,8 +1392,8 @@
     function localizeUserDetails(p) {
         SQL.transaction(function(i) {
             i.executeSql(
-                "INSERT INTO on_user(id,uuid,email,username,campus_key,user_type,fullname,address,main_category,servicetype,phone) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
-                [1, p.ui, p.em, p.un, p.sk, p.ut, p.fn, p.ad, p.cg, p.sv, p.ph]
+                "INSERT INTO on_user(id,uuid,email,username,campus_key,user_type,fullname,address,main_category,subcategory,phone) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                [1, p.ui, p.em, p.un, p.sk, p.ut, p.fn, p.ad, p.cg, p.sb, p.ph]
             );
         }, function(){}, function() {
             //
@@ -1200,22 +1404,25 @@
             , USERTYPE = p.ut
             , ADDRESS = p.ad
             , MAIN_CATEGORY = p.cg
-            , SERVICE_TYPE = p.sv
+            , SUB_CATEGORY = p.sb
             ;
+            preparePage();
 
-            App.changeViewTo('#landingView');
+            /*App.changeViewTo('#landingView');
             if (USERTYPE == 0) {//buyer
                 $('.forSeller').addClass('hd');
                 $('.forBuyer').removeClass('hd');
+                //
+                fetchRestaurants('timeline');
             } else if (USERTYPE == 1) {//seller
                 var tx = '';
-                if (MAIN_CATEGORY == '4') tx = GENERAL_SERVICES[SERVICE_TYPE];
+                if (MAIN_CATEGORY == '4') tx = GENERAL_SERVICES[SUB_CATEGORY];
                 else tx = MAIN_CATEGORIES[MAIN_CATEGORY];
                 //
                 $('#service-name').text(tx);
                 $('.forSeller').removeClass('hd');
                 $('.forBuyer').addClass('hd');
-            }
+            }*/
         });
     }
 

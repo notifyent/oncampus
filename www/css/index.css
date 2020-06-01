@@ -106,34 +106,43 @@ input[type=checkbox]:checked:after {
     opacity: 0;
 }
 .bg {
-    background: #FFFFFF;
+    background-color: #FFFFFF;
 }
 .bg-tr {
-    background: transparent;
+    background-color: transparent;
 }
 .Orange {
-    background: #FE5215;
+    background-color: #FE5215;
 }
 .Pink {
-    background: #FFF4F0;
+    background-color: #FFF4F0;
 }
 .Cream {
-    background: #FFFCF8;
+    background-color: #FFFCF8;
 }
 .Grey {
-    background: rgba(255, 255, 255, 0.81);
+    background-color: rgba(255, 255, 255, 0.81);
+}
+.Peach {
+    background-color: #cf0176;
+}
+.Purple {
+    background-color: #3a227e;
+}
+.Dark {
+    background-color: #242424;
 }
 .bg-pl {
-    background: rgba(0, 0, 0, 0.015);
+    background-color: rgba(0, 0, 0, 0.015);
 }
 .bg-ac {
-    background: rgba(0, 0, 0, 0.04);
+    background-color: rgba(0, 0, 0, 0.04);
 }
 .bg-fd {
-    background: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 .bg-mod {
-    background: rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.6);
 }
 .c-o {
     color: #FE5215;
@@ -201,6 +210,9 @@ input[type=checkbox]:checked:after {
 .bb1 {
     border-bottom: 1px solid #e4e4e4;
 }
+.b-rg {
+    border-right: 0.5px solid #e4e4e4;
+}
 .i-b {
     display: inline-block;
 }
@@ -236,6 +248,9 @@ input[type=checkbox]:checked:after {
 }
 .fx15 {
     flex: 1 1 15%;
+}
+.fx20 {
+    flex: 1 1 20%;
 }
 .fx40 {
     flex: 1 1 40%;
@@ -346,6 +361,9 @@ input[type=checkbox]:checked:after {
 }
 .fh-50 {
     height: calc(100% - 50px);
+}
+.fh-60 {
+    height: calc(100% - 60px);
 }
 .h56 {
     height: 56px;
@@ -488,6 +506,9 @@ input[type=checkbox]:checked:after {
 .z3 {
     z-index: 3;
 }
+.caption {
+    background-image: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.01));
+}
 .banner {
     height: 35vw;
     /*border-radius: 0 0 8px 8px;*/
@@ -503,6 +524,17 @@ input[type=checkbox]:checked:after {
 }
 .banner-content {
     height: calc(100% - 35vw);
+}
+.not-null:empty:after {
+    content: attr(info);
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    text-align: center;
+    padding: 20px;
 }
 .carousel {
     overflow-x: auto;
@@ -558,6 +590,9 @@ input[type=checkbox]:checked:after {
 }
 .mg-l {
     margin-left: 10px;
+}
+.mg-tm {
+    margin-top: 5px;
 }
 .mg-t {
     margin-top: 10px;
@@ -640,8 +675,8 @@ input[type=checkbox]:checked:after {
     margin-right: 10px;
     margin-bottom: 10px;
 
-    max-width: 300px;
-    max-height: 272px;
+    max-width: 240px;
+    max-height: 218px;
 }
 .boxes4:nth-child(2n) {
     margin-right: 0!important;
