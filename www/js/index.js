@@ -17,16 +17,16 @@
 
     var VERSION = '1.0.0'
     //
-    // , MY_URL = "http://localhost/oncampus/api"
-    // , RES_URL = "http://localhost/oncampus/api/chat"
+    // , MY_URL = "http://localhost/default/developer/oncampus/api"
+    // , RES_URL = "http://localhost/default/developer/oncampus/api/chat"
     // 
-    , MY_URL = "http://192.168.43.75/oncampus/api"
-    // , RES_URL = "http://192.168.43.75/oncampus/api/chat"
+    // , MY_URL = "http://192.168.43.75/default/developer/oncampus/api"
+    // , RES_URL = "http://192.168.43.75/default/developer/oncampus/api/chat"
     //
-    // , MY_URL = "http://172.20.10.4/oncampus/api"
-    // , RES_URL = "http://172.20.10.4/oncampus/api/chat"
+    , MY_URL = "http://172.20.10.4/default/developer/oncampus/api"
+    // , RES_URL = "http://172.20.10.4/default/developer/oncampus/api/chat"
     //
-    , BASE_URL = "http://localhost/oncampus"
+    , BASE_URL = "http://localhost/default/developer/oncampus"
     //
     , PLATFORM = 'web'
     , Views = ['#splashView']
@@ -79,17 +79,14 @@
     , EVENTS = ['', 'Club Party', 'Pool Party', 'Hangout', 'Concert', 'Movie Ticket', 'House Party', 'Gaming Competition', 'Departmental Party', 'Departmental Dinner']
     , TICKETS = ['', 'Regular', 'Couple', 'VIP', 'VVIP', 'Table for 4', 'Table for 5', 'Table for 6', 'Table for 10']
 
+    , ACTIVESELECT = null
+
 
 
 
     , INAPPBROWSEROPTIONS = 'location=yes,closebuttoncolor=#FE5215,footer=no,hardwareback=no,hidenavigationbuttons=yes,toolbarcolor=#FFFFFF,shouldPauseOnSuspend=yes'
     ;
-    //
 
-    /*SQL.transaction(function(i){
-        i.executeSql("DROP TABLE IF EXISTS on_user");
-    });
-    Store.clear();*/
 
     var App = {
         // LeavingView: false,
@@ -104,6 +101,7 @@
             Views.push(View); // current
             // LeavingView = false;
             // ChangingView = false;
+            $('body').unspin();
         },
         closeCurrentView: function() {
             // if (LeavingView) return; [[???]]
@@ -336,6 +334,40 @@
         }
         App.changeViewTo(View);
         
+    }).on('click', '#logoutLink', function() {
+        SQL.transaction(function(i){
+            i.executeSql("DROP TABLE IF EXISTS on_user");
+        });
+        Store.clear();
+        setTimeout(function() {
+            window.location.reload();
+        }, 300);
+    }).on('mousedown', 'select', function(e) {
+        ACTIVESELECT = this;
+        e.preventDefault();
+        // $('body').blur();
+        $(':focus').blur();
+        //
+        var options = this.options;
+        var selIdx = this.selectedIndex;
+        // toast(typeof options);
+        // console.log(options);
+        var h = '';
+        Array.prototype.slice.call(options).forEach(function(op, i) {
+            h += '<div class="fx fx-ac c-g option pd1215 f16 bb" data-index="'+op.index+'" data-selected="'+(selIdx==i)+'">'+op.text+'</div>';
+        });
+        //
+        $('#menuModal').show();
+        $('#menuFlexer').html(h).zoom();
+        return false;
+        //[[continue]]
+    }).on('click', '.option', function() {
+        var idx = this.dataset.index;
+        ACTIVESELECT.selectedIndex = idx;
+        if (ACTIVESELECT.id == 'category-select') {
+            if (idx == 4) $('#services-select').show();
+            else $('#services-select').hide();
+        }
     }).on('click', '#myItemsLink, .shop-link', function() {//[[continue]]
         App.changeViewTo('#itemsView');
         $('.items-view-category').hide();
@@ -379,8 +411,8 @@
                 catg: catg,
                 sub: sub
             },
-            timeout: 30000,
             dataType: 'json',
+            timeout: 30000,
             method: "GET",
             success: function(p) {
                 if (p.length > 0) {
@@ -420,11 +452,6 @@
         $('#reg-type').text(this.innerText);
         var ix = this.dataset.index;
         $('form[data-index="'+ix+'"]').show().siblings('form').hide();
-
-    }).on('change', '#category-select', function() {
-        
-        if (this.value == '4') $('#services-select').show();
-        else $('#services-select').hide();
 
     }).on('change', '.images', function(e) {
 
@@ -648,6 +675,7 @@
                                 localizeUserDetails(p, 'login');
                             }
                         },
+                        error: function() {toast('No connection');},
                         complete: function() { el.dataset.disabled = 'false'; $('body').unspin();}
                     });
                 }
@@ -836,16 +864,16 @@
                   ;
                 var cgs = el.querySelectorAll('.ticket_category');
                 cgs.forEach(function(t) {
-                    var TicketType = t.querySelector('select[name="category"]').value;
+                    var TicketCatg = t.querySelector('select[name="category"]').value;
                     var Price = parseInt(t.querySelector('input[name="price"]').value, 10);
                     var Discount = parseInt(t.querySelector('input[name="discount"]').value, 10) || 0;
                     var Seats = parseInt(t.querySelector('input[name="seats"]').value, 10) || 0;
                       ;
-                    if (TicketType == '0' || isNaN(Price)) return;
-                    var entry = [TicketType, Price, Discount, Seats];
-                    var ticket = {nm: TicketType, pr: Price, ds: Discount, st: Seats};
+                    if (TicketCatg == '0' || isNaN(Price)) return;
+                    var entry = [TicketCatg, Price, Discount, Seats];
+                    var ticket = {nm: TicketCatg, pr: Price, ds: Discount, st: Seats};
                     // console.log(entry);
-                    AllTickets.push(entry);
+                    AllTickets.push(entry);//[[continue]]//send object to server
                     LocalTickets.push(ticket);
                 });
 
@@ -938,7 +966,7 @@
     }).on('click', '#ticket_add', function(e) {
         var next = this.dataset.next;
         this.dataset.next = Number(next) + 1;
-        var h="<div class='fw ticket_category remove pd10 b4-r mg-b16 Orange c-w'>\
+        var h="<div class='fw ticket_category remove pd10 b4-r mg-b16 Orange white'>\
                 <div class='fw f12 mg-b ps-r b'>ADD A TICKET (<span class='ticket_count'>"+next+"</span>)<span class='ticket_closer ps-a lh0 mg-tm t0 r0'>x</span></div>\
                 <select name='category' class='fw pd20 bg mg-b16 b4-r ba'>\
                     <option value='0'>Select Ticket Category</option>\
@@ -977,10 +1005,10 @@
         mModal.style.display = 'block';
     }).on('click', '.item-edit', function(e) {
         console.log('Will edit: ' + this.dataset.itemId);
-        // [[continue]]
+        // [[continue]][[now]]
     }).on('click', '.item-remove', function(e) {
         console.log('Will delete: ' + this.dataset.itemId);
-        // [[continue]]
+        // [[continue]][[now]]
     }).on('click', '.item-order-spinner', function(e) {
         var id = e.target.classList;
         var counter = this.querySelector('.item-count');
@@ -1010,6 +1038,7 @@
                 //e-commerce
                 break;
             case '2':
+                //
                 var items = $menu.find('.item-count'); // console.log(items.length);
                 $.each(items, function() {
                     var tt = this.innerText;// console.log(tt);
@@ -1027,7 +1056,7 @@
             ORDER = orders;//global
             App.changeViewTo('#invoiceView');
             $('#invoice-content').html(buildInvoice(orders, catg));//[[continue]]
-        }
+        } else toast('No item was selected');
     }).on('click', '#proceed-to-address', function(e) {//on invoice view
         App.changeViewTo('#dropoffView');
         //
@@ -1235,7 +1264,7 @@
                     <div class='fw fh fx fx-ac fx-jc ov-h bg-mod'>\
                         <img src='"+MY_URL+"/img/items/"+c.id+".jpg' class='fw'>\
                     </div>\
-                    <div class='fw ps-a tx-sh c-w caption lh-i b0 l0 pd10'>\
+                    <div class='fw ps-a tx-sh white caption lh-i b0 l0 pd10'>\
                         <div class='fw b f16'>"+c.nm+"</div>\
                         <div class='fw b f16 c-o'>"+EVENTS[c.tp]+"</div>\
                         <div class='fw b c-o'>"+c.dt+"</div>\
@@ -1247,7 +1276,7 @@
                 <div class='fw fh fx fx-ac fx-jc ov-h bg-mod'>\
                     <img src='res/img/icon/party.jpg' class='fw'>\
                 </div>\
-                <div class='fw ps-a tx-sh c-w caption lh-i b0 l0 pd10'>\
+                <div class='fw ps-a tx-sh white caption lh-i b0 l0 pd10'>\
                     <div class='fw b f14'>More...</div>\
                     <div class='fw ovx-h ovy-a f10'>Browse more events</div>\
                 </div>\
@@ -1267,7 +1296,7 @@
                     <div class='fw fh fx fx-ac fx-jc ov-h bg-mod'>\
                         <img src='"+MY_URL+"/img/users/"+c.ui+".jpg' class='fw'>\
                     </div>\
-                    <div class='fw ps-a tx-sh c-w caption lh-i b0 l0 pd10'>\
+                    <div class='fw ps-a tx-sh white caption lh-i b0 l0 pd10'>\
                         <div class='fw b f16'>"+c.nm+"</div>\
                         <div class='fw ovx-h ovy-a f10'>"+c.ad+"</div>\
                     </div>\
@@ -1277,7 +1306,7 @@
                 <div class='fw fh fx fx-ac fx-jc ov-h bg-mod'>\
                     <img src='res/img/icon/food.jpg' class='fw'>\
                 </div>\
-                <div class='fw ps-a tx-sh c-w caption lh-i b0 l0 pd10'>\
+                <div class='fw ps-a tx-sh white caption lh-i b0 l0 pd10'>\
                     <div class='fw b f14'>More...</div>\
                     <div class='fw ovx-h ovy-a f10'>Browse more restaurants</div>\
                 </div>\
@@ -1309,14 +1338,14 @@
                                     <div class='item-remove f20 icon-logout' data-item-id='"+c.id+"'></div>\
                                 </div>":
                                 "<div class='fx fx-jc item-order-spinner' data-item-id='"+c.id+"'>\
-                                    <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-subtract'>-</div>\
-                                    <div class='fx fx-ac fx-jc w32 item-count tx-c"
+                                    <div class='fx fx-ac fx-jc Orange white b2-r box20 f20 item-subtract'>-</div>\
+                                    <div class='fx fx-ac fx-jc w32 item-count t-c"
                                         +"' data-item-id='"+c.id
                                         +"' data-item-name='"+c.nm.replace("'", '&apos;')
                                         +"' data-item-price='"+c.pr
                                         +"' data-item-discount='"+c.ds
                                         +"'>0</div>\
-                                    <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-add'>+</div>\
+                                    <div class='fx fx-ac fx-jc Orange white b2-r box20 f20 item-add'>+</div>\
                                 </div>"
                                 )+
                             "</div>\
@@ -1344,14 +1373,14 @@
                                         <div class='item-remove f20 icon-logout' data-item-id='"+c.id+"'></div>\
                                     </div>":
                                     "<div class='fx fx-jc item-order-spinner' data-item-id='"+c.id+"'>\
-                                        <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-subtract'>-</div>\
-                                        <div class='fx fx-ac fx-jc w32 item-count tx-c"
+                                        <div class='fx fx-ac fx-jc Orange white b2-r box20 f20 item-subtract'>-</div>\
+                                        <div class='fx fx-ac fx-jc w32 item-count t-c"
                                             +"' data-item-id='"+c.id
                                             +"' data-item-name='"+TICKETS[v.nm]
                                             +"' data-item-price='"+v.pr
                                             +"' data-item-discount='"+v.ds
                                             +"'>0</div>\
-                                        <div class='fx fx-ac fx-jc Orange c-w b2-r box20 f20 item-add'>+</div>\
+                                        <div class='fx fx-ac fx-jc Orange white b2-r box20 f20 item-add'>+</div>\
                                     </div>"
                                     )+
                                 "</div>\
@@ -1382,7 +1411,7 @@
         var charges = total + 500;
         ORDER_TOTAL = total;
         ORDER_CHARGES = 500;
-        h+="<div class='fw pd30'><input type='text' name='voucher' class='fw pd16 bg-ac tx-c b4-r ba' placeholder='Enter Voucher Code'></div>\
+        h+="<div class='fw pd30'><input type='text' name='voucher' class='fw pd16 bg-ac t-c b4-r ba' placeholder='Enter Voucher Code'></div>\
             <div class='fw fx pd1015'><span class='fx60'>Subtotal</span><span class=''>&#8358;"+total+"</span></div>\
             <div class='fw fx pd1015'><span class='fx60'>Service Charge</span><span class=''>&#8358;500</span></div>\
             <div class='fw fx b bt bb pd16'><span class='fx60'>Total</span><span class=''>&#8358;"+charges+"</span></div>";
@@ -1427,7 +1456,7 @@
     }
 
 
-    function toast(message) {
+    /*function toast(message) {//[[remove]]//remove plugin
         alert(message);return;
         //
         window.plugins.toast.showShortBottom(message, function(a){
@@ -1435,6 +1464,21 @@
         }, function(b){
             alert('toast error: ' + b);
         });
+    }*/
+
+    var TST = null;
+    var $tst = $('#toast-container');
+    function toast(message) {
+        clearTimeout(TST);
+        $tst.stop()
+            .html('<div class="b bg-mod pd1015 bs-r t-c f14 white" style="background-color:rgba(0, 0, 0, 0.8);">' + message + '</div>')
+            .css('opacity', 1).removeClass('hd');
+        
+        TST = setTimeout(function() {
+            $tst.animate({opacity: 0}, 1000,function(){
+                $tst.addClass('hd');
+            });
+        }, 3000);
     }
 
 });
