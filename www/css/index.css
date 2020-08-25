@@ -30,8 +30,7 @@ input, select, textarea, img {
     background: transparent;
 }
 
-select {
-    /*margin-left: -4px;*/
+select, [type="date"] {
     position: relative;
     -webkit-appearance: initial;
 }
@@ -49,6 +48,9 @@ select:after {
 }
 textarea {
     resize: none;
+}
+img[src=""]{
+    display: none;
 }
 /*input[type=checkbox] {
     width: 0;
@@ -87,7 +89,24 @@ input[type=checkbox]:checked:after {
 .active-tab {
     display: block;
 }
-
+.fw4 {
+    width: 400%;
+}
+.food-wrapper {
+    min-height: 60px;
+}
+.food-wrapper[data-menu="1"]{
+    left: 0;
+}
+.food-wrapper[data-menu="2"]{
+    left: 25%;
+}
+.food-wrapper[data-menu="3"]{
+    left: 50%;
+}
+.food-wrapper[data-menu="4"]{
+    left: 75%;
+}
 
 
 
@@ -181,6 +200,9 @@ input[type=checkbox]:checked:after {
 .bg-mod {
     background-color: rgba(0, 0, 0, 0.6);
 }
+.im-sh {
+    box-shadow: #000000 0px 0px 0px 9999px;
+}
 .c-o {
     color: #FE5215;
 }
@@ -191,7 +213,7 @@ input[type=checkbox]:checked:after {
     color: #615D5D;
 }
 .c-b {
-    color: 000000;
+    color: #000000;
 }
 .f0 {
     font-size: 0;
@@ -265,10 +287,10 @@ input[type=checkbox]:checked:after {
 .fx-ac {
     align-items: center;
 }
-.fx-as {
+.fx-fs {
     align-items: flex-start;
 }
-.fx-ae {
+.fx-fe {
     align-items: flex-end;
 }
 .fx-jc {
@@ -300,6 +322,9 @@ input[type=checkbox]:checked:after {
 }
 .tx-lt {
     text-decoration: line-through;
+}
+.ltt {
+    text-decoration-color: #FE5215;
 }
 .tx-uc {
     text-transform: uppercase;
@@ -337,10 +362,10 @@ input[type=checkbox]:checked:after {
 .ps-f {
     position: fixed;
 }
-.ps-a {
+.psa {
     position: absolute;
 }
-.ps-r {
+.psr {
     position: relative;
 }
 .w120 {
@@ -562,11 +587,11 @@ input[type=checkbox]:checked:after {
     left: 0;
     background-image: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.01));
 }
-.banner-content {
+.content-area {
     height: calc(100% - 35vw);
 }
 .not-null:empty:after {
-    content: attr(info);
+    content: attr(placeholder);
     position: absolute;
     width: 100%;
     left: 0;
@@ -602,19 +627,22 @@ input[type=checkbox]:checked:after {
     box-shadow: 0 3px 7px rgba(0, 0, 0, 0.1);
 }
 .sh-b {
-    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
 }
 .sh-c {
-    box-shadow: 0px 0px 8px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 8px 3px rgba(0, 0, 0, 0.1);
 }
 .sh-l {
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 .mg10 {
     margin: 10px;
 }
 .mg-r {
     margin-right: 10px;
+}
+.mg-rm {
+    margin-right: 5px;
 }
 .mg-rx {
     margin-right: 15px;
@@ -645,6 +673,9 @@ input[type=checkbox]:checked:after {
 }
 .mg-b {
     margin-bottom: 10px;
+}
+.mg-bx {
+    margin-bottom: 15px;
 }
 .mg-bm {
     margin-bottom: 5px;
@@ -708,6 +739,17 @@ input[type=checkbox]:checked:after {
     height: 96px;
     min-width: 96px;
     min-height: 96px;
+}
+.boxes2 {
+    margin-right: 20px;
+    margin-bottom: 20px;
+    width: calc(50% - 10px);
+}
+.boxes2:nth-child(2n) {
+    margin-right: 0!important;
+}
+.h50w {
+    height: calc(50vw - 21px);
 }
 .boxes4 {
     width: calc(50vw - 21px);
@@ -790,10 +832,47 @@ input[type=checkbox]:checked:after {
     pointer-events: none;
 }
 
-.white {
-    color: #fff;
+.triangle-down {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.triangle-down:after {
+    content: '';
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 6px 6px 0 6px;
+    border-color: #615d5d transparent transparent transparent;
+    position: absolute;
+    right: 22px;
+    margin: 0 auto;
+    pointer-events: none;
+}
+.radio {
+    margin-left: 24px;
+}
+.radio:before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid #d9d9e0;
+    position: absolute;
+    left: -24px;
+    transition: all 100ms linear;
+}
+.radio.selected:before {
+    border: 6px solid #FE5215;
 }
 
+.product-image:nth-of-type(odd) {
+    margin: 0;
+}
+
+.product-image:nth-of-type(3n), .product-image:nth-of-type(4n) {
+    margin-top: 10px;
+}
 
 
 #toast-container {
@@ -807,6 +886,9 @@ input[type=checkbox]:checked:after {
 }
 
 
+.Red {
+    background-color: #FF0000!important;
+}
 .centered {
     position: absolute;
     top: 50%;
@@ -816,6 +898,10 @@ input[type=checkbox]:checked:after {
 }
 .hd {
     display: none;
+}
+
+[data-disabled="true"] {
+    background-color: #d9d9e0!important;
 }
 
 .zoom {
